@@ -12,8 +12,22 @@ python -m pytest                     # 10 tests
 ```
 
 Open `site/index.html` in a browser. It is a single self-contained file: the numbers are computed
-in Python and embedded, and the page only displays and filters them. The period selector switches
-between **1W / 4W / 13W / 26W**, each compared with the previous period of the same length.
+in Python and embedded, and the page only displays and filters them.
+
+**Every figure is shown with its comparison, and € and % carry equal weight:**
+- KPI tiles: € and % of net revenue side by side, each with its own change.
+- **Margin statement:** net revenue → landed cost → Amazon fees → CM1 → ads → CM2 → storage → CM3,
+  as € per week and % of net revenue, now vs before, with Δ % and Δ pp.
+- **Why CM2 % moved:** a bridge in percentage points, from CM2 % before through the change in each
+  cost ratio to CM2 % now. The steps add up exactly.
+- Trends in € and in %, with the selected and the comparison period shaded; marketplaces compared
+  side by side.
+
+**Periods: 1W · 4W · 8W · 16W · 24W.** Each is compared with the same number of weeks before it.
+The data only covers 26 weeks, so 16W is compared with the 10 earlier weeks and 24W with the 2
+earlier weeks. That is why € changes are always **per week** and margins always **% of net
+revenue**: both stay comparable when the two periods differ in length. The page labels partial
+comparisons.
 
 ---
 

@@ -17,8 +17,10 @@ MARKETPLACES = {
 WEEKS_PER_MONTH = 52 / 12          # storage fee is per unit and month
 ATTRIBUTION_DAYS = 7               # ad sales are credited up to 7 days after the click
 
-# Comparison periods offered in the dashboard: label -> number of weeks
-PERIODS = {"1W": 1, "4W": 4, "13W": 13, "26W": 26}
+# Comparison periods offered in the dashboard: label -> number of weeks.
+# Each is compared with the same number of weeks before it; where the data does
+# not reach back that far (16W, 24W) with all earlier weeks, as weekly averages.
+PERIODS = {"1W": 1, "4W": 4, "8W": 8, "16W": 16, "24W": 24}
 
 # ---- status rules ("when does a cell turn red") ----
 RULES = {

@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-/* Layout: a weekly review sheet. Summary band, then actions, then the product x marketplace detail. */
+/* Layout: a controlling-style review. Every figure sits next to its comparison; € and % carry equal weight. */
 :root {
   --bg: #f4f5f3;
   --surface: #fcfcfb;
@@ -15,11 +15,15 @@
   --line: #c9cfcc;
   --accent: #0d5c6e;
   --accent-soft: #dcecef;
+  --prev-soft: #eceeea;
   --s1: #2a78d6;
   --s2: #eb6834;
-  --deduct: #b9c0bd;
+  --s3: #1baf7a;
+  --before: #a9b1ae;
   --up: #006300;
   --down: #b42f2f;
+  --up-bar: #0ca30c;
+  --down-bar: #d03b3b;
   --crit: #d03b3b;
   --crit-soft: #fbe9e8;
   --warn: #fab219;
@@ -34,16 +38,16 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1213; --surface: #181c1d; --ink: #eef1f0; --ink-2: #bfc7c6; --muted: #8a9393;
-    --grid: #2a3031; --line: #3a4243; --accent: #6fc1d3; --accent-soft: #1d3439;
-    --s1: #3987e5; --s2: #d95926; --deduct: #4c5556; --up: #3fbf3f; --down: #f07171;
+    --grid: #2a3031; --line: #3a4243; --accent: #6fc1d3; --accent-soft: #1d3439; --prev-soft: #22272a;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --before: #5e6869; --up: #3fbf3f; --down: #f07171;
     --crit-soft: #3a1f1f; --warn-ink: #f5c35a; --warn-soft: #3a3020; --good-soft: #1c3320;
     --shadow: none; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1213; --surface: #181c1d; --ink: #eef1f0; --ink-2: #bfc7c6; --muted: #8a9393;
-  --grid: #2a3031; --line: #3a4243; --accent: #6fc1d3; --accent-soft: #1d3439;
-  --s1: #3987e5; --s2: #d95926; --deduct: #4c5556; --up: #3fbf3f; --down: #f07171;
+  --grid: #2a3031; --line: #3a4243; --accent: #6fc1d3; --accent-soft: #1d3439; --prev-soft: #22272a;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --before: #5e6869; --up: #3fbf3f; --down: #f07171;
   --crit-soft: #3a1f1f; --warn-ink: #f5c35a; --warn-soft: #3a3020; --good-soft: #1c3320;
   --shadow: none; color-scheme: dark;
 }
@@ -64,7 +68,7 @@ h3 { font-size: 15px; }
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
 .section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 12px; }
-.section-head p { margin: 0; color: var(--ink-2); max-width: 70ch; }
+.section-head p { margin: 0; color: var(--ink-2); max-width: 72ch; }
 .panel { background: var(--surface); border: 1px solid var(--grid); border-radius: 6px; box-shadow: var(--shadow); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -73,38 +77,75 @@ h3 { font-size: 15px; }
 .top .meta { color: var(--ink-2); margin-top: 6px; }
 .periods { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
-.seg button { font: 600 13px var(--f-display); letter-spacing: 0.04em; padding: 7px 16px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; }
+.seg button { font: 600 13px var(--f-display); letter-spacing: 0.04em; padding: 7px 14px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
 .seg button:hover:not([aria-pressed="true"]) { background: var(--accent-soft); color: var(--ink); }
-.compare { font-size: 12.5px; color: var(--muted); }
+.compare { font-size: 12.5px; color: var(--ink-2); }
+.compare .partial { color: var(--warn-ink); }
 
-/* KPI band */
-.band { display: grid; grid-template-columns: minmax(240px, 1.3fr) repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.tile .label { font-family: var(--f-display); font-size: 12.5px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.tile .value { font-size: 24px; font-weight: 600; line-height: 1.2; }
-.tile.hero { border-left: 3px solid var(--accent); }
-.tile.hero .value { font-size: 36px; }
-.tile .sub { font-size: 12.5px; color: var(--ink-2); }
-.delta { font-size: 12.5px; font-weight: 500; }
+/* KPI tiles: € and % at equal weight */
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tile.hero { border-top: 3px solid var(--accent); }
+.tile .label { font-family: var(--f-display); font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pair > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pair .v { font-size: 22px; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.pair .u { font-size: 11.5px; color: var(--muted); }
+.pair > div + div { border-left: 1px solid var(--grid); padding-left: 10px; }
+.delta { font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .delta.up { color: var(--up); } .delta.down { color: var(--down); } .delta.flat { color: var(--muted); }
-.flag { font-size: 11.5px; color: var(--warn-ink); }
+.flag { font-size: 12px; color: var(--warn-ink); }
 
-/* overview row */
-.overview { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 16px; }
-.chart-panel { padding: 16px 16px 8px; min-width: 0; }
+/* P&L + bridge */
+.pnl-panel, .chart-panel { padding: 16px; min-width: 0; }
+.table-wrap { overflow-x: auto; }
+table.pnl { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.pnl th { font: 500 11.5px var(--f-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 6px 8px; white-space: nowrap; }
+.pnl thead tr:first-child th { color: var(--ink-2); border-bottom: 1px solid var(--grid); }
+.pnl thead tr:last-child th { border-bottom: 1px solid var(--line); }
+.pnl th:first-child, .pnl td:first-child { text-align: left; }
+.pnl td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+.pnl tr.sub td { font-weight: 600; background: var(--bg); }
+.pnl tr.head td { font-weight: 600; background: var(--accent-soft); }
+.pnl td.sep, .pnl th.sep { border-left: 1px solid var(--line); }
+.pnl .cost td:first-child { padding-left: 20px; color: var(--ink-2); }
+.pctbar { display: inline-grid; grid-template-rows: 5px 5px; gap: 2px; width: 110px; vertical-align: middle; margin-left: 8px; }
+.pctbar i { display: block; height: 5px; border-radius: 2px; }
+
 .chart { width: 100%; position: relative; }
 .chart svg { display: block; width: 100%; overflow: visible; }
 .chart text { fill: var(--muted); font: 11.5px var(--f-body); font-variant-numeric: tabular-nums; }
 .chart .val { fill: var(--ink); font-weight: 600; }
 .chart .cat { fill: var(--ink-2); }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--ink-2); margin: 6px 0 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); margin: 0 0 6px; }
 .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
-.risks { display: flex; flex-direction: column; gap: 12px; }
+.legend b { display: inline-block; width: 12px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.trends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+/* marketplaces */
+table.mkt { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.mkt th { font: 500 11.5px var(--f-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.mkt th:first-child, .mkt td:first-child { text-align: left; }
+.mkt td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+.mkt tr.total td { font-weight: 600; background: var(--bg); }
+.mkt td.big { font-size: 15px; font-weight: 600; }
+
+/* risks + actions */
+.risks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .risk { padding: 14px 16px; display: grid; gap: 4px; }
 .risk .big { font-size: 22px; font-weight: 600; }
 .risk p { margin: 0; color: var(--ink-2); font-size: 13px; }
+.actions { display: grid; gap: 12px; }
+.action { padding: 16px 18px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 4px 14px; }
+.action .rank { font: 600 26px/1 var(--f-display); color: var(--accent); grid-row: span 3; }
+.action .head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px; }
+.action .scope { font-size: 12.5px; color: var(--muted); }
+.action dl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px 12px; margin: 8px 0 0; }
+.action dt { font-family: var(--f-display); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 1px; }
+.action dd { margin: 0; color: var(--ink); max-width: 95ch; }
+.cod { font-size: 12.5px; font-weight: 600; color: var(--down); white-space: nowrap; }
 
 /* status chips */
 .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
@@ -115,17 +156,6 @@ h3 { font-size: 15px; }
 .ic.critical { background: var(--crit); border-radius: 50%; }
 .ic.watch { width: 0; height: 0; background: none; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid var(--warn); }
 .ic.ok { background: var(--good); border-radius: 2px; transform: rotate(45deg); width: 7px; height: 7px; }
-
-/* actions */
-.actions { display: grid; gap: 12px; }
-.action { padding: 16px 18px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 4px 14px; }
-.action .rank { font: 600 26px/1 var(--f-display); color: var(--accent); grid-row: span 3; }
-.action .head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px; }
-.action .scope { font-size: 12.5px; color: var(--muted); }
-.action dl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px 12px; margin: 8px 0 0; }
-.action dt { font-family: var(--f-display); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 1px; }
-.action dd { margin: 0; color: var(--ink); max-width: 95ch; }
-.cod { font-size: 12.5px; font-weight: 600; color: var(--down); white-space: nowrap; }
 
 /* matrix */
 .matrix-wrap { overflow-x: auto; }
@@ -146,22 +176,18 @@ table.matrix { border-collapse: separate; border-spacing: 4px; width: 100%; min-
 .filters { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
 .filters .seg button { padding: 5px 12px; font-size: 12.5px; }
 .toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--ink-2); }
-.table-wrap { overflow-x: auto; }
-table.grid { border-collapse: collapse; width: 100%; min-width: 1080px; font-size: 13px; }
+table.grid { border-collapse: collapse; width: 100%; min-width: 1180px; font-size: 13px; }
 .grid th { font: 500 11.5px var(--f-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none; }
-.grid th:first-child, .grid th:nth-child(2), .grid th:nth-child(3) { text-align: left; }
+.grid th:nth-child(-n+3) { text-align: left; }
 .grid th[aria-sort] { color: var(--ink); }
 .grid td { padding: 8px 10px; border-bottom: 1px solid var(--grid); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.grid td:first-child, .grid td:nth-child(2), .grid td:nth-child(3) { text-align: left; }
+.grid td:nth-child(-n+3) { text-align: left; }
 .grid td.neg { color: var(--down); font-weight: 600; }
 .grid td.warnv { color: var(--warn-ink); font-weight: 600; }
 .grid tr.sel td { background: var(--accent-soft); }
-.grid .reasons { white-space: normal; text-align: left; color: var(--ink-2); font-size: 12px; min-width: 260px; max-width: 420px; }
+.grid .reasons { white-space: normal; text-align: left; color: var(--ink-2); font-size: 12px; min-width: 280px; max-width: 420px; }
 
-/* stock */
 .stock-panel { padding: 16px; }
-
-/* footer */
 details { padding: 12px 16px; }
 details summary { cursor: pointer; font: 600 15px var(--f-display); }
 details[open] summary { margin-bottom: 10px; }
@@ -173,17 +199,14 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
 .defs td, .defs th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
 .defs th { font: 500 11.5px var(--f-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
 
-#tip { position: fixed; z-index: 10; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; padding: 7px 9px; border-radius: 5px; max-width: 260px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+#tip { position: fixed; z-index: 10; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; padding: 7px 9px; border-radius: 5px; max-width: 280px; line-height: 1.4; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 860px) {
-  .overview { grid-template-columns: minmax(0, 1fr); }
-  .band { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tile.hero { grid-column: span 2; }
+@media (max-width: 1100px) { .trends { grid-template-columns: repeat(2, minmax(0, 1fr)); } .trends > :first-child { grid-column: 1 / -1; } }
+@media (max-width: 760px) { .trends { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) {
   .dq li { grid-template-columns: 60px minmax(0, 1fr); }
   .dq li .src { grid-column: 2; }
   .dq li .det { grid-column: 1 / -1; }
-}
-@media (max-width: 480px) {
   .action { grid-template-columns: minmax(0, 1fr); }
   .action .rank { grid-row: auto; }
   .action dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
@@ -197,8 +220,8 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
 <div class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">Weekly performance review · Amazon DE · FR · IT · UK</div>
-      <h1 id="title">Marketplace Performance Review</h1>
+      <div class="eyebrow">Weekly performance review · Amazon DE · FR · IT · UK · net EUR</div>
+      <h1>Marketplace Performance Review</h1>
       <div class="meta" id="meta"></div>
     </div>
     <div class="periods">
@@ -207,20 +230,49 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
     </div>
   </header>
 
-  <section aria-labelledby="h-summary">
-    <h2 id="h-summary" hidden>Summary</h2>
+  <section aria-label="Key figures">
     <div class="band" id="band"></div>
+    <div class="flag" id="band-flag" style="margin-top:8px"></div>
   </section>
 
-  <section class="overview">
-    <div class="panel chart-panel">
-      <div class="section-head">
-        <h2>From net revenue to what is left</h2>
-        <span class="muted" id="wf-range"></span>
-      </div>
-      <div class="chart" id="waterfall"></div>
+  <section class="panel pnl-panel" aria-labelledby="h-pnl">
+    <div class="section-head">
+      <h2 id="h-pnl">Margin statement</h2>
+      <p>€ per week and % of net revenue, now vs before. The bars compare the % now (blue) with before (grey).</p>
     </div>
-    <div class="risks" id="risks"></div>
+    <div class="table-wrap"><table class="pnl" id="pnl"></table></div>
+  </section>
+
+  <section aria-labelledby="h-trend">
+    <div class="section-head">
+      <h2 id="h-trend">What changed and why</h2>
+      <p>Trend bands: dark = selected period, light = the period it is compared with.</p>
+    </div>
+    <div class="trends">
+      <div class="panel chart-panel">
+        <h3>Why CM2 % moved</h3>
+        <div class="legend" style="margin-top:6px"><span>Percentage points of net revenue: a cost growing faster than revenue pulls CM2 % down</span></div>
+        <div class="chart" id="bridge"></div>
+      </div>
+      <div class="panel chart-panel">
+        <h3>€ per week</h3>
+        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>Net revenue</span><span><i style="background: var(--s2)"></i>CM2</span></div>
+        <div class="chart" id="trend-eur"></div>
+      </div>
+      <div class="panel chart-panel">
+        <h3>% of net revenue</h3>
+        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>CM1 %</span><span><i style="background: var(--s2)"></i>CM2 %</span><span><i style="background: var(--s3)"></i>Ad spend (TACoS)</span></div>
+        <div class="chart" id="trend-pct"></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-mkt">
+    <div class="section-head">
+      <h2 id="h-mkt">Marketplaces compared</h2>
+      <p>Same period, same rules. Net revenue per week, margins as % of net revenue.</p>
+    </div>
+    <div class="table-wrap panel"><table class="mkt" id="mkt"></table></div>
   </section>
 
   <section aria-labelledby="h-actions">
@@ -231,14 +283,7 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
     <div class="actions" id="actions"></div>
   </section>
 
-  <section class="panel chart-panel" aria-labelledby="h-trend">
-    <div class="section-head">
-      <h2 id="h-trend">26-week trend</h2>
-      <p>Net revenue and CM2 per week. The shaded band is the selected period.</p>
-    </div>
-    <div class="legend"><span><i style="background: var(--s1)"></i>Net revenue</span><span><i style="background: var(--s2)"></i>CM2</span></div>
-    <div class="chart" id="trend"></div>
-  </section>
+  <section aria-label="Risks"><div class="risks" id="risks"></div></section>
 
   <section aria-labelledby="h-where">
     <div class="section-head">
@@ -298,35 +343,37 @@ const RANK = { none: -1, ok: 0, watch: 1, critical: 2 };
 const LEVEL_TXT = { critical: "Critical", watch: "Watch", ok: "OK", none: "No data" };
 
 const eur = (v, d = 0) => v == null ? "–" : (v < 0 ? "−" : "") + "€" + Math.abs(v).toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: d });
-const eurK = (v) => v == null ? "–" : Math.abs(v) >= 10000 ? (v < 0 ? "−" : "") + "€" + (Math.abs(v) / 1000).toLocaleString("en-GB", { maximumFractionDigits: 1 }) + "k" : eur(v);
-const pct = (v, d = 1) => v == null ? "–" : v.toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: d }) + " %";
+const eurK = (v) => v == null ? "–" : Math.abs(v) >= 1e6 ? (v < 0 ? "−" : "") + "€" + (Math.abs(v) / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 2 }) + "M" : Math.abs(v) >= 10000 ? (v < 0 ? "−" : "") + "€" + (Math.abs(v) / 1000).toLocaleString("en-GB", { maximumFractionDigits: 1 }) + "k" : eur(v);
+const pct = (v, d = 1) => v == null ? "–" : (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: d }) + " %";
 const int = (v) => v == null ? "–" : Math.round(v).toLocaleString("en-GB");
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-function isoWeek(dmy) {               // "21.09." of the data year -> KW number
+function isoWeek(dmy) {
   const [d, m] = dmy.split(".").map(Number);
   const t = new Date(Date.UTC(2026, m - 1, d));
   const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day);
   const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
   return Math.ceil(((t - y0) / 86400000 + 1) / 7);
 }
+const chip = (level) => `<span class="chip ${level}"><span class="ic ${level}"></span>${LEVEL_TXT[level]}</span>`;
 
-function chip(level) {
-  return `<span class="chip ${level}"><span class="ic ${level}"></span>${LEVEL_TXT[level]}</span>`;
+/* dir: +1 higher is better, -1 lower is better, 0 neutral */
+function dRel(cur, prev, dir) {
+  if (cur == null || prev == null || !prev) return `<span class="delta flat">–</span>`;
+  const d = (cur - prev) / Math.abs(prev) * 100;
+  return deltaSpan(d, (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(1) + " %", dir, 0.5);
 }
-
-/* direction: +1 higher is better, -1 lower is better, 0 neutral */
-function delta(cur, prev, kind, dir) {
-  if (prev == null || cur == null) return `<span class="delta flat">no earlier period</span>`;
-  let txt, d;
-  if (kind === "pp") { d = cur - prev; txt = (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(1) + " pp"; }
-  else { if (!prev) return `<span class="delta flat">–</span>`; d = (cur - prev) / Math.abs(prev) * 100; txt = (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(1) + " %"; }
-  const cls = Math.abs(d) < 0.5 || dir === 0 ? "flat" : (d > 0) === (dir > 0) ? "up" : "down";
-  const arrow = Math.abs(d) < 0.5 ? "" : d > 0 ? "▲ " : "▼ ";
+function dPP(cur, prev, dir) {
+  if (cur == null || prev == null) return `<span class="delta flat">–</span>`;
+  const d = cur - prev;
+  return deltaSpan(d, (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(1) + " pp", dir, 0.05);
+}
+function deltaSpan(d, txt, dir, eps) {
+  const cls = Math.abs(d) < eps || dir === 0 ? "flat" : (d > 0) === (dir > 0) ? "up" : "down";
+  const arrow = Math.abs(d) < eps ? "" : d > 0 ? "▲ " : "▼ ";
   return `<span class="delta ${cls}">${arrow}${txt}</span>`;
 }
 
-/* ---------------- tooltip ---------------- */
 const tip = $("tip");
 function showTip(html, x, y) {
   tip.innerHTML = html; tip.hidden = false;
@@ -336,176 +383,198 @@ function showTip(html, x, y) {
   if (top + r.height > window.innerHeight - 8) top = y - r.height - 14;
   tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
 }
-function hideTip() { tip.hidden = true; }
+const hideTip = () => { tip.hidden = true; };
+const P = () => DATA.periods[state.period];
+const prevWord = () => P().prev_full ? "before" : `prev. ${P().prev_weeks} wk avg.`;
 
-/* ---------------- header + period ---------------- */
+/* ---------------- header ---------------- */
 function renderHeader() {
   const m = DATA.meta, rw = m.reporting_week;
-  $("meta").innerHTML = `Reporting week <strong>KW ${isoWeek(rw.slice(0, 6))}</strong> · ${rw} · exported ${m.export_date} · all values net EUR`;
+  $("meta").innerHTML = `Reporting week <strong>KW ${isoWeek(rw.slice(0, 6))}</strong> · ${rw} · exported ${m.export_date}`;
   $("period").innerHTML = Object.keys(DATA.periods).map(k =>
     `<button type="button" id="p-${k}" aria-pressed="${k === state.period}" data-p="${k}">${k}</button>`).join("");
   $("period").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; state.period = b.dataset.p;
     try { localStorage.setItem("perf.period", state.period); } catch (err) {} renderAll(); };
 }
-
 function renderCompare() {
-  const p = DATA.periods[state.period];
+  const p = P();
   [...$("period").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.p === state.period));
-  $("compare").textContent = p.prev ? `${p.cur} compared with ${p.prev}` : `${p.cur} · no earlier period in the data`;
+  $("compare").innerHTML = p.prev_full
+    ? `<strong>${p.cur}</strong> vs ${p.prev} (same length)`
+    : `<strong>${p.cur}</strong> vs ${p.prev} <span class="partial">· only ${p.prev_weeks} earlier week${p.prev_weeks > 1 ? "s" : ""} in the data: compared as weekly averages</span>`;
 }
 
-/* ---------------- KPI band ---------------- */
+/* ---------------- tiles ---------------- */
 function renderBand() {
-  const t = DATA.totals[state.period], c = t.cur, p = t.prev || {};
-  const attr = state.period === "1W";
-  const tiles = [
-    { hero: true, label: "CM2 · after ads", v: eurK(c.cm2), d: delta(c.cm2, p.cm2, "rel", 1), sub: `${pct(c.cm2_pct)} of net revenue · ${delta(c.cm2_pct, p.cm2_pct, "pp", 1)}` },
-    { label: "Net revenue", v: eurK(c.net_revenue), d: delta(c.net_revenue, p.net_revenue, "rel", 1), sub: `${int(c.units)} units` },
-    { label: "CM1 · before ads", v: eurK(c.cm1), d: delta(c.cm1, p.cm1, "rel", 1), sub: `${pct(c.cm1_pct)} of net revenue` },
-    { label: "Ad spend", v: eurK(c.ad_spend), d: delta(c.ad_spend, p.ad_spend, "rel", 0), sub: `TACoS ${pct(c.tacos)} · ACoS ${pct(c.acos, 0)}${attr ? "*" : ""}` },
-    { label: "CM3 · after storage", v: eurK(c.cm3), d: delta(c.cm3, p.cm3, "rel", 1), sub: `storage est. ${eurK(c.storage_cost)}` },
-  ];
-  $("band").innerHTML = tiles.map(x => `
-    <div class="panel tile${x.hero ? " hero" : ""}">
-      <div class="label">${x.label}</div>
-      <div class="value num">${x.v}</div>
-      <div>${x.d}</div>
-      <div class="sub">${x.sub}</div>
-    </div>`).join("") ;
-  if (attr) $("band").insertAdjacentHTML("beforeend",
-    `<div class="flag" style="grid-column: 1 / -1">* ACoS for the reporting week reads high: ad sales are credited up to ${DATA.meta.attribution_days} days after the click and the export ran on ${DATA.meta.export_date}. Ad status rules use the 4 weeks before.</div>`);
+  const c = DATA.totals[state.period].cur, p = DATA.totals[state.period].prev || {};
+  const t = (label, eurV, eurSub, eurD, pctV, pctSub, pctD, hero) => `
+    <div class="panel tile${hero ? " hero" : ""}">
+      <div class="label">${label}</div>
+      <div class="pair">
+        <div><span class="v">${eurV}</span><span class="u">${eurSub}</span>${eurD}</div>
+        <div><span class="v">${pctV}</span><span class="u">${pctSub}</span>${pctD}</div>
+      </div>
+    </div>`;
+  const wk = P().weeks > 1 ? ` · ${eurK(c.net_revenue_wk)}/wk` : "";
+  $("band").innerHTML =
+    t("Net revenue", eurK(c.net_revenue), `period total${wk}`, dRel(c.net_revenue_wk, p.net_revenue_wk, 1),
+      int(c.units_wk), "units per week", dRel(c.units_wk, p.units_wk, 1)) +
+    t("CM1 · before ads", eurK(c.cm1), "period total", dRel(c.cm1_wk, p.cm1_wk, 1),
+      pct(c.cm1_pct), "of net revenue", dPP(c.cm1_pct, p.cm1_pct, 1)) +
+    t("Ad spend", eurK(c.ad_spend), "period total", dRel(c.ad_spend_wk, p.ad_spend_wk, -1),
+      pct(c.tacos), "TACoS · of net revenue", dPP(c.tacos, p.tacos, -1)) +
+    t("CM2 · after ads", eurK(c.cm2), "period total", dRel(c.cm2_wk, p.cm2_wk, 1),
+      pct(c.cm2_pct), "of net revenue", dPP(c.cm2_pct, p.cm2_pct, 1), true) +
+    t("CM3 · after storage", eurK(c.cm3), "period total", dRel(c.cm3_wk, p.cm3_wk, 1),
+      pct(c.cm3_pct), "of net revenue", dPP(c.cm3_pct, p.cm3_pct, 1));
+  $("band-flag").textContent = `€ change is per week, so periods of different length compare fairly. ` +
+    `Last week's ACoS reads high: ad sales are credited up to ${DATA.meta.attribution_days} days after the click (export ${DATA.meta.export_date}).`;
 }
 
-/* ---------------- waterfall ---------------- */
-function renderWaterfall() {
-  const c = DATA.totals[state.period].cur;
-  $("wf-range").textContent = DATA.periods[state.period].cur;
-  const el = $("waterfall"), W = Math.max(300, el.clientWidth), H = 250, narrow = W < 560;
-  const steps = [
-    { k: "Net revenue", s: "Net", v: c.net_revenue, total: true },
-    { k: "Landed cost", s: "Cost", v: -c.cogs },
-    { k: "Amazon fees", s: "Fees", v: -c.amazon_fees },
-    { k: "CM1", s: "CM1", v: c.cm1, total: true },
-    { k: "Ad spend", s: "Ads", v: -c.ad_spend },
-    { k: "CM2", s: "CM2", v: c.cm2, total: true },
-    { k: "Storage", s: "Store", v: -c.storage_cost },
-    { k: "CM3", s: "CM3", v: c.cm3, total: true },
+/* ---------------- margin statement ---------------- */
+function renderPnl() {
+  const c = DATA.totals[state.period].cur, p = DATA.totals[state.period].prev || {};
+  const lines = [
+    { k: "Net revenue", f: "net_revenue", pf: null, dir: 1, cls: "head" },
+    { k: "Landed cost (incl. freight & customs)", f: "cogs", pf: "cogs_pct", dir: -1, cls: "cost" },
+    { k: "Amazon fees (commission + FBA)", f: "amazon_fees", pf: "fees_pct", dir: -1, cls: "cost" },
+    { k: "CM1", f: "cm1", pf: "cm1_pct", dir: 1, cls: "sub" },
+    { k: "Ad spend", f: "ad_spend", pf: "tacos", dir: -1, cls: "cost" },
+    { k: "CM2", f: "cm2", pf: "cm2_pct", dir: 1, cls: "sub" },
+    { k: "Storage (est.)", f: "storage_cost", pf: "storage_pct", dir: -1, cls: "cost" },
+    { k: "CM3", f: "cm3", pf: "cm3_pct", dir: 1, cls: "sub" },
   ];
-  const pad = { l: 8, r: 8, t: 24, b: 40 };
-  const max = c.net_revenue, y = (v) => pad.t + (1 - v / max) * (H - pad.t - pad.b);
-  const n = steps.length, slot = (W - pad.l - pad.r) / n, bw = Math.min(62, slot * 0.62);
-  let run = 0, svg = "";
-  for (let i = 0; i <= 4; i++) {
-    const gv = max * i / 4, gy = y(gv);
-    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${gy}" y2="${gy}" stroke="var(--grid)" />`;
-  }
-  steps.forEach((s, i) => {
-    const x = pad.l + slot * i + (slot - bw) / 2;
-    let top, bot;
-    if (s.total) { top = y(s.v); bot = y(0); run = s.v; }
-    else { top = y(run); bot = y(run + s.v); run = run + s.v; }
-    const h = Math.max(2, bot - top);
-    const fill = s.total ? "var(--s1)" : "var(--deduct)";
-    svg += `<rect class="wf" data-i="${i}" x="${x}" y="${top}" width="${bw}" height="${h}" rx="3" fill="${fill}" />`;
-    if (i < n - 1) {
-      const ny = s.total ? top : bot, nx = x + bw;
-      svg += `<line x1="${nx}" x2="${nx + slot - bw}" y1="${ny}" y2="${ny}" stroke="var(--line)" stroke-dasharray="2 3" />`;
-    }
-    const lbl = narrow ? (s.v < 0 ? "−" : "") + "€" + Math.round(Math.abs(s.v) / 1000) + "k" : eurK(s.v);
-    const fs = narrow ? ' style="font-size:10px"' : "";
-    svg += `<text class="val" x="${x + bw / 2}" y="${top - 7}" text-anchor="middle"${fs}>${lbl}</text>`;
-    svg += `<text class="cat" x="${x + bw / 2}" y="${H - pad.b + 16}" text-anchor="middle"${fs}>${narrow ? s.s : s.k}</text>`;
-    if (s.total) svg += `<text x="${x + bw / 2}" y="${H - pad.b + 30}" text-anchor="middle"${fs}>${pct(s.v / c.net_revenue * 100, 0)}</text>`;
+  const sign = (l, v) => v == null ? null : (l.dir < 0 ? -v : v);
+  let h = `<thead><tr><th></th><th>Period</th><th class="sep" colspan="3">€ per week</th><th class="sep" colspan="3">% of net revenue</th></tr>
+    <tr><th>Line</th><th>total €</th><th class="sep">now</th><th>${prevWord()}</th><th>Δ</th><th class="sep">now</th><th>${prevWord()}</th><th>Δ pp</th></tr></thead><tbody>`;
+  lines.forEach(l => {
+    const pcNow = l.pf ? c[l.pf] : 100, pcPrev = l.pf ? p[l.pf] : (p.net_revenue_wk != null ? 100 : null);
+    const w = Math.min(100, Math.max(0, Math.abs(pcNow ?? 0))), wp = Math.min(100, Math.max(0, Math.abs(pcPrev ?? 0)));
+    const bars = l.pf ? `<span class="pctbar" aria-hidden="true"><i style="width:${w}%;background:var(--s1)"></i><i style="width:${wp}%;background:var(--before)"></i></span>` : "";
+    h += `<tr class="${l.cls}"><td>${l.k}</td><td>${eur(sign(l, c[l.f]))}</td>
+      <td class="sep">${eur(sign(l, c[l.f + "_wk"]))}</td><td class="muted">${eur(sign(l, p[l.f + "_wk"]))}</td><td>${dRel(c[l.f + "_wk"], p[l.f + "_wk"], l.dir)}</td>
+      <td class="sep">${l.pf ? pct(sign(l, pcNow)) : "100 %"}${bars}</td><td class="muted">${l.pf ? pct(sign(l, pcPrev)) : "100 %"}</td><td>${l.pf ? dPP(pcNow, pcPrev, l.dir) : ""}</td></tr>`;
   });
-  svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)" />`;
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Margin waterfall">${svg}</svg>`;
-  el.querySelectorAll("rect.wf").forEach(r => {
+  $("pnl").innerHTML = h + "</tbody>";
+}
+
+/* ---------------- CM2 % bridge ---------------- */
+function renderBridge() {
+  const steps = DATA.totals[state.period].bridge, el = $("bridge");
+  if (!steps) { el.innerHTML = `<p class="muted">No earlier period in the data.</p>`; return; }
+  const W = Math.max(280, el.clientWidth), H = 220, pad = { l: 38, r: 4, t: 22, b: 40 };
+  let run = 0; const pts = steps.map(s => { if (s.total) { run = s.v; return { ...s, a: 0, b: s.v }; } const a = run; run += s.v; return { ...s, a, b: run }; });
+  const lo = Math.max(0, Math.min(...pts.map(p => Math.min(p.a, p.b))) - 3), hi = Math.max(...pts.map(p => Math.max(p.a, p.b))) + 2;
+  const y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
+  const n = steps.length, slot = (W - pad.l - pad.r) / n, bw = Math.min(56, slot * 0.6);
+  let svg = "";
+  for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5)
+    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" /><text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end">${v} %</text>`;
+  pts.forEach((s, i) => {
+    const x = pad.l + slot * i + (slot - bw) / 2;
+    const top = y(Math.max(s.a, s.b)), bot = s.total ? H - pad.b : y(Math.min(s.a, s.b));
+    const fill = s.total ? (i === 0 ? "var(--before)" : "var(--s1)") : s.v >= 0 ? "var(--up-bar)" : "var(--down-bar)";
+    svg += `<rect class="br" data-i="${i}" x="${x}" y="${top}" width="${bw}" height="${Math.max(2, bot - top)}" rx="3" fill="${fill}" />`;
+    if (i < n - 1) svg += `<line x1="${x + bw}" x2="${x + slot}" y1="${y(s.b)}" y2="${y(s.b)}" stroke="var(--line)" stroke-dasharray="2 3" />`;
+    const lbl = s.total ? pct(s.v) : (s.v >= 0 ? "+" : "−") + Math.abs(s.v).toFixed(2) + " pp";
+    svg += `<text class="val" x="${x + bw / 2}" y="${top - 7}" text-anchor="middle">${lbl}</text>`;
+    const short = { "Landed cost": "Cost", "Amazon fees": "Fees", "Ad spend": "Ads" }[s.k] || "CM2";
+    svg += `<text class="cat" x="${x + bw / 2}" y="${H - pad.b + 16}" text-anchor="middle">${short}</text>`;
+    svg += `<text x="${x + bw / 2}" y="${H - pad.b + 30}" text-anchor="middle">${s.total ? (i === 0 ? "before" : "now") : "effect"}</text>`;
+  });
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="CM2 percentage bridge">${svg}</svg>`;
+  el.querySelectorAll("rect.br").forEach(r => {
     const s = steps[+r.dataset.i];
-    r.addEventListener("mousemove", (e) => showTip(`<strong>${s.k}</strong><br>${eur(s.v)} · ${pct(Math.abs(s.v) / c.net_revenue * 100)} of net revenue`, e.clientX, e.clientY));
+    const t = s.total ? `${s.k}: ${pct(s.v)}` : `${s.k} ${s.v >= 0 ? "fell" : "rose"} by ${Math.abs(s.v).toFixed(2)} pp of net revenue → CM2 % ${s.v >= 0 ? "+" : "−"}${Math.abs(s.v).toFixed(2)} pp`;
+    r.addEventListener("mousemove", (e) => showTip(t, e.clientX, e.clientY));
     r.addEventListener("mouseleave", hideTip);
   });
 }
 
-/* ---------------- risk tiles ---------------- */
+/* ---------------- trends ---------------- */
+function lineChart(el, series, fmtAxis, fmtTip, minZero) {
+  const rows = DATA.trend, W = Math.max(280, el.clientWidth), H = 220, pad = { l: 48, r: 12, t: 12, b: 30 };
+  const vals = rows.flatMap(r => series.map(s => r[s.f])).filter(v => v != null);
+  const lo = minZero ? Math.min(0, ...vals) : Math.floor(Math.min(...vals) / 5) * 5, hi = Math.max(...vals) * 1.06;
+  const L = rows.length - 1, x = (i) => pad.l + i * (W - pad.l - pad.r) / L;
+  const y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
+  const p = P(), half = (x(1) - x(0)) / 2;
+  const curStart = L - p.weeks + 1, prevStart = curStart - p.prev_weeks;
+  let svg = "";
+  if (p.prev_weeks) svg += `<rect x="${Math.max(pad.l, x(prevStart) - half)}" y="${pad.t}" width="${x(curStart) - half - Math.max(pad.l, x(prevStart) - half)}" height="${H - pad.t - pad.b}" fill="var(--prev-soft)" />`;
+  svg += `<rect x="${Math.max(pad.l, x(curStart) - half)}" y="${pad.t}" width="${x(L) + 2 - Math.max(pad.l, x(curStart) - half)}" height="${H - pad.t - pad.b}" fill="var(--accent-soft)" />`;
+  const ticks = 4, step = (hi - lo) / ticks;
+  for (let i = 0; i <= ticks; i++) {
+    const v = lo + step * i;
+    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" /><text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end">${fmtAxis(v)}</text>`;
+  }
+  const every = W < 520 ? 6 : 3;
+  rows.forEach((r, i) => { if ((L - i) % every === 0) svg += `<text x="${x(i)}" y="${H - pad.b + 16}" text-anchor="middle">KW ${isoWeek(r.week)}</text>`; });
+  series.forEach(s => {
+    const d = rows.map((r, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(r[s.f]).toFixed(1)}`).join("");
+    svg += `<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2" stroke-linejoin="round" />`;
+    svg += `<circle cx="${x(L)}" cy="${y(rows[L][s.f])}" r="3.5" fill="${s.c}" stroke="var(--surface)" stroke-width="2" />`;
+  });
+  svg += `<line class="xh" x1="0" x2="0" y1="${pad.t}" y2="${H - pad.b}" stroke="var(--line)" visibility="hidden" />`;
+  svg += `<rect class="hit" x="${pad.l}" y="${pad.t}" width="${W - pad.l - pad.r}" height="${H - pad.t - pad.b}" fill="transparent" />`;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img">${svg}</svg>`;
+  const hit = el.querySelector(".hit"), xh = el.querySelector(".xh");
+  hit.addEventListener("mousemove", (e) => {
+    const b = hit.getBoundingClientRect(), i = Math.max(0, Math.min(L, Math.round((e.clientX - b.left) / b.width * L))), r = rows[i];
+    xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.setAttribute("visibility", "visible");
+    showTip(`<strong>KW ${isoWeek(r.week)}</strong> · ${r.label}<br>` + series.map(s => `${s.n}: ${fmtTip(r[s.f])}`).join("<br>"), e.clientX, e.clientY);
+  });
+  hit.addEventListener("mouseleave", () => { xh.setAttribute("visibility", "hidden"); hideTip(); });
+}
+function renderTrends() {
+  lineChart($("trend-eur"), [{ f: "net_revenue", c: "var(--s1)", n: "Net revenue" }, { f: "cm2", c: "var(--s2)", n: "CM2" }],
+    (v) => "€" + Math.round(v / 1000) + "k", (v) => eur(v), true);
+  lineChart($("trend-pct"), [{ f: "cm1_pct", c: "var(--s1)", n: "CM1 %" }, { f: "cm2_pct", c: "var(--s2)", n: "CM2 %" }, { f: "tacos", c: "var(--s3)", n: "Ad spend (TACoS)" }],
+    (v) => Math.round(v) + " %", (v) => pct(v), true);
+}
+
+/* ---------------- marketplaces ---------------- */
+function renderMkt() {
+  const m = DATA.by_marketplace[state.period], tot = DATA.totals[state.period];
+  const rows = DATA.marketplaces.map(k => ({ k, ...m[k] })).concat([{ k: "Total", cur: tot.cur, prev: tot.prev, total: true }]);
+  let h = `<thead><tr><th>Market</th><th>Net revenue / wk</th><th>Δ</th><th>CM1 %</th><th>Δ pp</th><th>TACoS</th><th>Δ pp</th><th>CM2 %</th><th>Δ pp</th><th>CM2 / wk</th><th>Δ</th><th>Conv.</th><th>Buy box</th></tr></thead><tbody>`;
+  rows.forEach(r => {
+    const c = r.cur, p = r.prev || {};
+    h += `<tr class="${r.total ? "total" : ""}"><td>${r.k}</td><td>${eur(c.net_revenue_wk)}</td><td>${dRel(c.net_revenue_wk, p.net_revenue_wk, 1)}</td>
+      <td>${pct(c.cm1_pct)}</td><td>${dPP(c.cm1_pct, p.cm1_pct, 1)}</td><td>${pct(c.tacos)}</td><td>${dPP(c.tacos, p.tacos, -1)}</td>
+      <td class="big">${pct(c.cm2_pct)}</td><td>${dPP(c.cm2_pct, p.cm2_pct, 1)}</td><td>${eur(c.cm2_wk)}</td><td>${dRel(c.cm2_wk, p.cm2_wk, 1)}</td>
+      <td>${pct(c.cvr)}</td><td>${pct(c.buy_box, 0)}</td></tr>`;
+  });
+  $("mkt").innerHTML = h + "</tbody>";
+}
+
+/* ---------------- risks + actions ---------------- */
 function renderRisks() {
   const r = DATA.risks;
   $("risks").innerHTML = `
-    <div class="panel risk">
-      <div class="eyebrow">Stock-out risk</div>
+    <div class="panel risk"><div class="eyebrow">Stock-out risk</div>
       <div class="big num">${eur(r.stockout_cm2)} <span class="muted" style="font-size:13px;font-weight:400">CM2 at risk</span></div>
-      <p>${r.stockout_count} item(s) will run out before a new order can arrive: ${r.stockout_items.join(", ")}.</p>
-    </div>
-    <div class="panel risk">
-      <div class="eyebrow">Loss-making ads</div>
+      <p>Runs out before a new order can arrive: ${r.stockout_items.join(", ")}.</p></div>
+    <div class="panel risk"><div class="eyebrow">Loss-making ads</div>
       <div class="big num">${eur(r.loss_ad_spend_week)}<span class="muted" style="font-size:13px;font-weight:400"> per week</span></div>
-      <p>Ad spend on products with negative CM2 (${r.loss_items.join(", ")}); CM2 there ${eur(r.loss_cm2_week)} per week.</p>
-    </div>
-    <div class="panel risk">
-      <div class="eyebrow">Tied-up capital</div>
+      <p>Ad spend on products with negative CM2 (${r.loss_items.join(", ")}); CM2 there ${eur(r.loss_cm2_week)} per week.</p></div>
+    <div class="panel risk"><div class="eyebrow">Tied-up capital</div>
       <div class="big num">${eur(r.overstock_value)}</div>
-      <p>Stock with more than ${DATA.rules.overstock_weeks} weeks of cover (${r.overstock_items.join(", ")}), about ${eur(r.overstock_storage_month)} storage per month.</p>
-    </div>`;
+      <p>Stock above ${DATA.rules.overstock_weeks} weeks of cover (${r.overstock_items.join(", ")}), about ${eur(r.overstock_storage_month)} storage per month.</p></div>`;
 }
-
-/* ---------------- actions ---------------- */
 function renderActions() {
   $("actions").innerHTML = DATA.actions.map((a, i) => `
     <article class="panel action">
       <div class="rank">${i + 1}</div>
       <div class="head"><h3>${esc(a.title)}</h3><span class="cod">waiting costs ≈ ${eur(a.cost_of_delay_week)} CM2 / week</span></div>
       <div class="scope">${esc(a.scope)}</div>
-      <dl>
-        <dt>Number</dt><dd>${esc(a.number)}</dd>
-        <dt>Cause</dt><dd>${esc(a.cause)}</dd>
-        <dt>Action</dt><dd>${esc(a.action)}</dd>
-        <dt>Effect</dt><dd>${esc(a.effect)}</dd>
-      </dl>
+      <dl><dt>Number</dt><dd>${esc(a.number)}</dd><dt>Cause</dt><dd>${esc(a.cause)}</dd>
+          <dt>Action</dt><dd>${esc(a.action)}</dd><dt>Effect</dt><dd>${esc(a.effect)}</dd></dl>
     </article>`).join("");
 }
 
-/* ---------------- trend ---------------- */
-function renderTrend() {
-  const rows = DATA.trend, el = $("trend");
-  const W = Math.max(300, el.clientWidth), H = 240, pad = { l: 52, r: 16, t: 12, b: 34 };
-  const vals = rows.flatMap(r => [r.net_revenue, r.cm2]);
-  const lo = Math.min(0, ...vals), hi = Math.max(...vals) * 1.08;
-  const x = (i) => pad.l + i * (W - pad.l - pad.r) / (rows.length - 1);
-  const y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
-  const nSel = DATA.periods[state.period].weeks;
-  let svg = "";
-  const sx = x(rows.length - nSel) - (nSel === rows.length ? 0 : (x(1) - x(0)) / 2);
-  svg += `<rect x="${Math.max(pad.l, sx)}" y="${pad.t}" width="${x(rows.length - 1) - Math.max(pad.l, sx) + 4}" height="${H - pad.t - pad.b}" fill="var(--accent-soft)" />`;
-  const step = hi > 40000 ? 20000 : 10000;
-  for (let v = 0; v <= hi; v += step) {
-    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" />`;
-    svg += `<text x="${pad.l - 8}" y="${y(v) + 4}" text-anchor="end">€${v / 1000}k</text>`;
-  }
-  const every = W < 560 ? 4 : 2;
-  rows.forEach((r, i) => { if (i % every === 0 || i === rows.length - 1)
-    svg += `<text x="${x(i)}" y="${H - pad.b + 18}" text-anchor="middle">KW ${isoWeek(r.week)}</text>`; });
-  const path = (k) => rows.map((r, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
-  const area = path("net_revenue") + `L${x(rows.length - 1)},${y(0)}L${x(0)},${y(0)}Z`;
-  svg += `<path d="${area}" fill="var(--s1)" fill-opacity="0.08" />`;
-  svg += `<path d="${path("net_revenue")}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" />`;
-  svg += `<path d="${path("cm2")}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" />`;
-  const L = rows.length - 1;
-  svg += `<circle cx="${x(L)}" cy="${y(rows[L].net_revenue)}" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" />`;
-  svg += `<circle cx="${x(L)}" cy="${y(rows[L].cm2)}" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" />`;
-  svg += `<line id="xh" x1="0" x2="0" y1="${pad.t}" y2="${H - pad.b}" stroke="var(--line)" visibility="hidden" />`;
-  svg += `<rect id="hit" x="${pad.l}" y="${pad.t}" width="${W - pad.l - pad.r}" height="${H - pad.t - pad.b}" fill="transparent" />`;
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Weekly net revenue and CM2">${svg}</svg>`;
-  const hit = el.querySelector("#hit"), xh = el.querySelector("#xh");
-  hit.addEventListener("mousemove", (e) => {
-    const b = hit.getBoundingClientRect(), rel = (e.clientX - b.left) / b.width;
-    const i = Math.max(0, Math.min(L, Math.round(rel * L))), r = rows[i];
-    xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.setAttribute("visibility", "visible");
-    showTip(`<strong>KW ${isoWeek(r.week)}</strong> · ${r.label}<br>Net revenue ${eur(r.net_revenue)}<br>CM2 ${eur(r.cm2)} (${pct(r.cm2_pct)})<br>Ad spend ${eur(r.ad_spend)}`, e.clientX, e.clientY);
-  });
-  hit.addEventListener("mouseleave", () => { xh.setAttribute("visibility", "hidden"); hideTip(); });
-}
-
 /* ---------------- matrix ---------------- */
-function cellOf(mp, sku) { return DATA.cells.find(c => c.marketplace === mp && c.sku === sku); }
+const cellOf = (mp, sku) => DATA.cells.find(c => c.marketplace === mp && c.sku === sku);
 function renderMatrix() {
   const mps = DATA.marketplaces;
   let h = `<thead><tr><th>Product</th>${mps.map(m => `<th>${m}</th>`).join("")}</tr></thead><tbody>`;
@@ -533,14 +602,13 @@ function renderMatrix() {
   });
 }
 
-/* ---------------- grid ---------------- */
+/* ---------------- detail grid ---------------- */
 const COLS = [
   { key: "product", label: "Product" }, { key: "mp", label: "Mkt" }, { key: "level", label: "Status" },
-  { key: "units", label: "Units", f: int }, { key: "net_revenue", label: "Net revenue", f: eur },
-  { key: "d_rev", label: "Δ vs prev." }, { key: "cm2", label: "CM2", f: eur, neg: true },
-  { key: "cm2_pct", label: "CM2 %", f: pct, neg: true }, { key: "cm2_unit", label: "CM2/unit", f: (v) => eur(v, 2), neg: true },
-  { key: "acos", label: "ACoS (net)", f: (v) => pct(v, 0) }, { key: "be_acos", label: "Break-even", f: (v) => pct(v, 0) },
-  { key: "cvr", label: "Conv.", f: pct }, { key: "buy_box", label: "Buy box", f: (v) => pct(v, 0) },
+  { key: "net_revenue_wk", label: "Net rev. / wk" }, { key: "d_rev", label: "Δ" },
+  { key: "cm2_pct", label: "CM2 %" }, { key: "d_cm2pp", label: "Δ pp" }, { key: "cm2_unit", label: "CM2 / unit" },
+  { key: "tacos", label: "TACoS" }, { key: "acos", label: "ACoS (net)" }, { key: "be_acos", label: "Break-even" },
+  { key: "cvr", label: "Conv." }, { key: "d_cvrpp", label: "Δ pp" }, { key: "buy_box", label: "Buy box" },
   { key: "cover", label: "Cover (wk)" }, { key: "reasons", label: "Why flagged" },
 ];
 function gridRows() {
@@ -548,9 +616,11 @@ function gridRows() {
   return DATA.cells.filter(c => c.level !== "none").map(c => {
     const k = `${c.marketplace}|${c.sku}`, r = g[k] || { cur: {}, prev: null };
     const st = DATA.stock.find(s => s.region === region[c.marketplace] && s.sku === c.sku);
-    const cur = r.cur, prev = r.prev;
-    return { key: k, product: NAME[c.sku], sku: c.sku, mp: c.marketplace, level: c.level, signals: c.signals,
-      ...cur, d_rev: prev && prev.net_revenue ? (cur.net_revenue - prev.net_revenue) / prev.net_revenue * 100 : null,
+    const cur = r.cur, prev = r.prev || {};
+    return { key: k, product: NAME[c.sku], sku: c.sku, mp: c.marketplace, level: c.level, signals: c.signals, ...cur, prev,
+      d_rev: prev.net_revenue_wk ? (cur.net_revenue_wk - prev.net_revenue_wk) / prev.net_revenue_wk * 100 : null,
+      d_cm2pp: prev.cm2_pct != null && cur.cm2_pct != null ? cur.cm2_pct - prev.cm2_pct : null,
+      d_cvrpp: prev.cvr != null && cur.cvr != null ? cur.cvr - prev.cvr : null,
       cover: st ? st.cover_weeks : null, lead: st ? st.lead_weeks : null, stockLevel: st ? st.level : "ok" };
   });
 }
@@ -558,8 +628,8 @@ function renderGrid() {
   const mps = ["ALL", ...DATA.marketplaces];
   $("mpfilter").innerHTML = mps.map(m => `<button type="button" id="mp-${m}" data-m="${m}" aria-pressed="${state.mp === m}">${m === "ALL" ? "All" : m}</button>`).join("");
   $("mpfilter").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; state.mp = b.dataset.m; state.selected = null; renderMatrix(); renderGrid(); };
-  const p = DATA.periods[state.period];
-  $("detail-note").textContent = `${p.cur}${p.prev ? ", change vs " + p.prev : ""}. ACoS for periods ending with the reporting week reads slightly high (ads credit window still open).`;
+  const p = P();
+  $("detail-note").textContent = `${p.cur} vs ${p.prev}${p.prev_full ? "" : ` (weekly averages of ${p.prev_weeks} earlier weeks)`}. € per week, margins in % of net revenue.`;
   let rows = gridRows();
   if (state.mp !== "ALL") rows = rows.filter(r => r.mp === state.mp);
   if (state.flagged) rows = rows.filter(r => r.level === "critical" || r.level === "watch");
@@ -570,20 +640,21 @@ function renderGrid() {
     if (typeof va === "string") return dir * va.localeCompare(vb);
     return dir * (va - vb) || (b.net_revenue - a.net_revenue);
   });
+  const pp = (v) => v == null ? "–" : deltaSpan(v, (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + " pp", 1, 0.05);
   let h = `<thead><tr>${COLS.map(c => `<th data-k="${c.key}" ${state.sort.key === c.key ? `aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""}>${c.label}${state.sort.key === c.key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
   rows.forEach(r => {
-    h += `<tr class="${state.selected === r.key ? "sel" : ""}">`;
-    h += `<td>${esc(r.product)}<div class="muted" style="font-size:11.5px">${r.sku}${LIFE[r.sku] === "Launch" ? " · Launch" : ""}</div></td><td>${r.mp}</td><td>${chip(r.level)}</td>`;
-    h += `<td>${int(r.units)}</td><td>${eur(r.net_revenue)}</td>`;
-    h += `<td>${r.d_rev == null ? "–" : `<span class="delta ${Math.abs(r.d_rev) < 0.5 ? "flat" : r.d_rev > 0 ? "up" : "down"}">${r.d_rev > 0 ? "+" : "−"}${Math.abs(r.d_rev).toFixed(0)} %</span>`}</td>`;
-    h += `<td class="${r.cm2 < 0 ? "neg" : ""}">${eur(r.cm2)}</td><td class="${r.cm2_pct < 0 ? "neg" : ""}">${pct(r.cm2_pct)}</td><td class="${r.cm2_unit < 0 ? "neg" : ""}">${eur(r.cm2_unit, 2)}</td>`;
     const acosBad = r.acos != null && r.be_acos != null && r.acos > r.be_acos * DATA.rules.acos_margin;
-    h += `<td class="${acosBad ? "warnv" : ""}">${pct(r.acos, 0)}</td><td>${pct(r.be_acos, 0)}</td>`;
-    h += `<td>${pct(r.cvr)}</td><td class="${r.buy_box != null && r.buy_box < DATA.rules.buybox_critical ? "neg" : r.buy_box < DATA.rules.buybox_watch ? "warnv" : ""}">${pct(r.buy_box, 0)}</td>`;
-    h += `<td class="${r.stockLevel === "critical" ? "neg" : r.stockLevel === "watch" ? "warnv" : ""}">${r.cover == null ? "∞" : r.cover.toFixed(1)}<span class="muted"> / ${r.lead}</span></td>`;
-    h += `<td class="reasons">${r.signals.map(s => esc(s.text)).join("<br>") || '<span class="muted">–</span>'}</td></tr>`;
+    h += `<tr class="${state.selected === r.key ? "sel" : ""}">
+      <td>${esc(r.product)}<div class="muted" style="font-size:11.5px">${r.sku}${LIFE[r.sku] === "Launch" ? " · Launch" : ""}</div></td><td>${r.mp}</td><td>${chip(r.level)}</td>
+      <td>${eur(r.net_revenue_wk)}</td><td>${r.d_rev == null ? "–" : deltaSpan(r.d_rev, (r.d_rev >= 0 ? "+" : "−") + Math.abs(r.d_rev).toFixed(0) + " %", 1, 0.5)}</td>
+      <td class="${r.cm2_pct < 0 ? "neg" : ""}">${pct(r.cm2_pct)}</td><td>${pp(r.d_cm2pp)}</td><td class="${r.cm2_unit < 0 ? "neg" : ""}">${eur(r.cm2_unit, 2)}</td>
+      <td>${pct(r.tacos)}</td><td class="${acosBad ? "warnv" : ""}">${pct(r.acos, 0)}</td><td>${pct(r.be_acos, 0)}</td>
+      <td>${pct(r.cvr)}</td><td>${pp(r.d_cvrpp)}</td>
+      <td class="${r.buy_box != null && r.buy_box < DATA.rules.buybox_critical ? "neg" : r.buy_box < DATA.rules.buybox_watch ? "warnv" : ""}">${pct(r.buy_box, 0)}</td>
+      <td class="${r.stockLevel === "critical" ? "neg" : r.stockLevel === "watch" ? "warnv" : ""}">${r.cover == null ? "∞" : r.cover.toFixed(1)}<span class="muted"> / ${r.lead}</span></td>
+      <td class="reasons">${r.signals.map(s => esc(s.text)).join("<br>") || '<span class="muted">–</span>'}</td></tr>`;
   });
-  if (!rows.length) h += `<tr><td colspan="${COLS.length}" style="text-align:left" class="muted">No rows match the filter.</td></tr>`;
+  if (!rows.length) h += `<tr><td colspan="${COLS.length}" class="muted">No rows match the filter.</td></tr>`;
   $("grid").innerHTML = h + "</tbody>";
   $("grid").querySelector("thead").onclick = (e) => {
     const th = e.target.closest("th"); if (!th || th.dataset.k === "reasons") return;
@@ -592,22 +663,18 @@ function renderGrid() {
   };
 }
 
-/* ---------------- stock chart ---------------- */
+/* ---------------- stock ---------------- */
 function renderStock() {
   const rows = [...DATA.stock].sort((a, b) => (RANK[b.level] - RANK[a.level]) || ((a.cover_weeks ?? 1e9) - (b.cover_weeks ?? 1e9)));
   const el = $("stock"), W = Math.max(300, el.clientWidth), rowH = 28, narrow = W < 560;
-  const labelW = narrow ? 118 : Math.min(250, W * 0.42);
-  const cap = 30, pad = { t: 18, b: 26, r: 64 };
-  const H = pad.t + rows.length * rowH + pad.b;
-  const x = (v) => labelW + Math.min(v, cap) / cap * (W - labelW - pad.r);
+  const labelW = narrow ? 118 : Math.min(250, W * 0.42), cap = 30, pad = { t: 18, b: 26, r: 64 };
+  const H = pad.t + rows.length * rowH + pad.b, x = (v) => labelW + Math.min(v, cap) / cap * (W - labelW - pad.r);
   let svg = "";
   (narrow ? [0, 10, 20, 30] : [0, 5, 10, 15, 20, 25, 30]).forEach(v => {
-    svg += `<line x1="${x(v)}" x2="${x(v)}" y1="${pad.t - 6}" y2="${H - pad.b}" stroke="var(--grid)" />`;
-    svg += `<text x="${x(v)}" y="${H - pad.b + 16}" text-anchor="middle">${v === cap ? "30+ wk" : v}</text>`;
+    svg += `<line x1="${x(v)}" x2="${x(v)}" y1="${pad.t - 6}" y2="${H - pad.b}" stroke="var(--grid)" /><text x="${x(v)}" y="${H - pad.b + 16}" text-anchor="middle">${v === cap ? "30+ wk" : v}</text>`;
   });
   rows.forEach((r, i) => {
-    const y0 = pad.t + i * rowH, bh = 12, cy = y0 + rowH / 2;
-    const cover = r.cover_weeks ?? cap, incl = r.cover_incl_inbound ?? cap;
+    const cy = pad.t + i * rowH + rowH / 2, bh = 12, cover = r.cover_weeks ?? cap, incl = r.cover_incl_inbound ?? cap;
     const col = r.level === "critical" ? "var(--crit)" : r.level === "watch" ? "var(--warn)" : "var(--s1)";
     svg += `<text class="cat" x="${labelW - 10}" y="${cy + 4}" text-anchor="end">${esc(narrow ? r.sku.replace("LN-", "") : r.product)} · ${r.region}</text>`;
     if (incl > cover) svg += `<rect x="${x(0)}" y="${cy - bh / 2}" width="${x(incl) - x(0)}" height="${bh}" rx="3" fill="${col}" fill-opacity="0.25" />`;
@@ -629,14 +696,11 @@ function renderFooter() {
   $("defs").innerHTML = `<thead><tr><th>KPI</th><th>Formula</th><th>Why</th></tr></thead><tbody>` +
     DATA.kpi_definitions.map(k => `<tr><td><strong>${esc(k.label)}</strong></td><td>${esc(k.formula)}</td><td class="muted">${esc(k.why)}</td></tr>`).join("") + "</tbody>";
   const R = DATA.rules;
-  $("rules-note").textContent = `Rules: stock critical if cover < reorder time and nothing inbound, watch if cover incl. inbound < reorder time + ${R.cover_watch_buffer_weeks} weeks or > ${R.overstock_weeks} weeks · buy box critical if < ${R.buybox_critical} % in both of the last 2 weeks, watch if < ${R.buybox_watch} % · CM2 critical if negative over the last ${R.cm2_window_weeks} weeks · ACoS watch if > break-even × ${R.acos_margin} over the 4 weeks before the reporting week · conversion watch if −${R.cvr_drop * 100} % and revenue watch if −${R.revenue_drop * 100} % vs own 4-week average · minimum volumes apply (e.g. ≥ ${R.min_sessions_week} sessions/week).`;
+  $("rules-note").textContent = `Rules: stock critical if cover < reorder time and nothing inbound, watch if cover incl. inbound < reorder time + ${R.cover_watch_buffer_weeks} weeks or > ${R.overstock_weeks} weeks · buy box critical if < ${R.buybox_critical} % in both of the last 2 weeks, watch if < ${R.buybox_watch} % · CM2 critical if negative over the last ${R.cm2_window_weeks} weeks · ACoS watch if > break-even × ${R.acos_margin} over the 4 weeks before the reporting week · conversion watch if −${R.cvr_drop * 100} % and revenue watch if −${R.revenue_drop * 100} % vs own 4-week average · minimum volumes apply. Status does not depend on the period selector.`;
 }
 
-function renderAll() {
-  renderCompare(); renderBand(); renderWaterfall(); renderTrend(); renderGrid();
-}
-
+function renderAll() { renderCompare(); renderBand(); renderPnl(); renderBridge(); renderTrends(); renderMkt(); renderGrid(); }
 renderHeader(); renderRisks(); renderActions(); renderMatrix(); renderStock(); renderFooter(); renderAll();
-let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderWaterfall(); renderTrend(); renderStock(); }, 120); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderBridge(); renderTrends(); renderStock(); }, 120); });
 $("flagged").addEventListener("change", (e) => { state.flagged = e.target.checked; state.selected = null; renderMatrix(); renderGrid(); });
 </script>

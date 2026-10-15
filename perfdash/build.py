@@ -11,14 +11,15 @@ import pandas as pd
 
 from .actions import top_actions
 from .config import ATTRIBUTION_DAYS, PERIODS, RULES
-from .kpis import KPI_DEFINITIONS, summarize, window
+from .kpis import KPI_DEFINITIONS, PER_WEEK, comparison_weeks, per_week, summarize, window
 from .model import Model, build
 from .rules import LEVEL_RANK, evaluate, stock_status
 
 TEMPLATE = Path(__file__).with_name("template.html")
 FIELDS = ["sessions", "units", "net_revenue", "cogs", "amazon_fees", "cm1", "ad_spend", "cm2",
-          "storage_cost", "cm3", "cm1_pct", "cm2_pct", "cm3_pct", "cm2_unit", "tacos", "acos",
-          "be_acos", "cvr", "buy_box", "asp"]
+          "storage_cost", "cm3", "cm1_pct", "cm2_pct", "cm3_pct", "cogs_pct", "fees_pct",
+          "storage_pct", "cm2_unit", "tacos", "acos", "be_acos", "cvr", "buy_box", "asp"]
+FIELDS += [f + "_wk" for f in PER_WEEK]
 
 
 def _clean(v):
@@ -43,30 +44,41 @@ def payload(m: Model) -> dict:
     names = m.dim_product.set_index("sku")["product"]
     life = m.dim_product.set_index("sku")["lifecycle"]
 
+    def label(i0: int, i1: int) -> str:
+        return f"{weeks[i0]:%d.%m.}–{weeks[i1] + pd.Timedelta(days=6):%d.%m.%Y}"
+
+    def table(frame: pd.DataFrame, by: list[str], n: int):
+        return per_week(summarize(frame, by), n) if not frame.empty else None
+
     periods, totals, by_mp, grid = {}, {}, {}, {}
     for key, n in PERIODS.items():
-        cur = window(fw, weeks, end, n)
-        prev = window(fw, weeks, end - n, n)
+        k = comparison_weeks(end, n)                      # weeks available before the window
+        cur, prev = window(fw, weeks, end, n), window(fw, weeks, end - n, k)
         periods[key] = {
-            "weeks": n,
-            "cur": f"{weeks[end - n + 1]:%d.%m.}–{weeks[end] + pd.Timedelta(days=6):%d.%m.%Y}",
-            "prev": (f"{weeks[end - 2 * n + 1]:%d.%m.}–{weeks[end - n] + pd.Timedelta(days=6):%d.%m.%Y}"
-                     if not prev.empty else None),
-            "acos_incomplete": True,   # every window ends with the reporting week
+            "weeks": n, "prev_weeks": k, "prev_full": k == n,
+            "cur": label(end - n + 1, end),
+            "prev": label(end - n - k + 1, end - n) if k else None,
         }
-        totals[key] = {"cur": _row(summarize(cur, []).iloc[0]),
-                       "prev": _row(summarize(prev, []).iloc[0]) if not prev.empty else None}
-        mc, mpv = summarize(cur, ["marketplace"]), (summarize(prev, ["marketplace"]) if not prev.empty else None)
+        tc, tp = table(cur, [], n), table(prev, [], k)
+        c, p = tc.iloc[0], (tp.iloc[0] if tp is not None else None)
+        bridge = None
+        if p is not None:   # why CM2 % moved, in percentage points; the steps add up exactly
+            bridge = [{"k": "CM2 % before", "v": float(p.cm2_pct), "total": True},
+                      {"k": "Landed cost", "v": float(p.cogs_pct - c.cogs_pct)},
+                      {"k": "Amazon fees", "v": float(p.fees_pct - c.fees_pct)},
+                      {"k": "Ad spend", "v": float(p.tacos - c.tacos)},
+                      {"k": "CM2 % now", "v": float(c.cm2_pct), "total": True}]
+        totals[key] = {"cur": _row(c), "prev": _row(p) if p is not None else None, "bridge": bridge}
+        mc, mpv = table(cur, ["marketplace"], n), table(prev, ["marketplace"], k)
         by_mp[key] = {mp: {"cur": _row(mc.loc[mp]),
                            "prev": _row(mpv.loc[mp]) if mpv is not None and mp in mpv.index else None}
                       for mp in mc.index}
-        gc = summarize(cur, ["marketplace", "sku"])
-        gp = summarize(prev, ["marketplace", "sku"]) if not prev.empty else None
+        gc, gp = table(cur, ["marketplace", "sku"], n), table(prev, ["marketplace", "sku"], k)
         grid[key] = {f"{mp}|{sku}": {"cur": _row(gc.loc[(mp, sku)]),
                                      "prev": _row(gp.loc[(mp, sku)]) if gp is not None and (mp, sku) in gp.index else None}
                      for mp, sku in gc.index}
 
-    trend = summarize(fw, ["week"])
+    trend = per_week(summarize(fw, ["week"]), 1)
     trend_rows = [{"week": f"{w:%d.%m.}", "label": _week_label(w), **_row(r)} for w, r in trend.iterrows()]
 
     _, status = evaluate(m)
@@ -76,7 +88,7 @@ def payload(m: Model) -> dict:
             s = status[(status.marketplace == mp) & (status.sku == sku)]
             level = max(s.level, key=LEVEL_RANK.get) if not s.empty else "ok"
             sig = sorted(s.to_dict("records"), key=lambda r: -LEVEL_RANK[r["level"]])
-            live = f"{mp}|{sku}" in grid["26W"]
+            live = f"{mp}|{sku}" in grid[max(PERIODS, key=PERIODS.get)]
             cells.append({"marketplace": mp, "sku": sku, "level": level if live else "none",
                           "signals": [{"rule": r["rule"], "level": r["level"], "text": r["text"]} for r in sig]})
 

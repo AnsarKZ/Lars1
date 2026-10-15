@@ -5,7 +5,7 @@ import pytest
 
 from perfdash.actions import top_actions
 from perfdash.build import payload
-from perfdash.kpis import summarize, window
+from perfdash.kpis import comparison_weeks, summarize, window
 from perfdash.model import build
 from perfdash.rules import evaluate, stock_status
 
@@ -83,7 +83,8 @@ def test_top_actions_ranked_by_cost_of_waiting(m):
 
 def test_payload_is_complete_and_json_safe(m):
     d = payload(m)
-    assert set(d["periods"]) == {"1W", "4W", "13W", "26W"} and d["periods"]["26W"]["prev"] is None
+    assert list(d["periods"]) == ["1W", "4W", "8W", "16W", "24W"]
+    assert [d["periods"][k]["prev_weeks"] for k in d["periods"]] == [1, 4, 8, 10, 2]
     assert len(d["cells"]) == 32 and len(d["trend"]) == 26
     for period in d["grid"].values():
         for row in period.values():
@@ -91,6 +92,18 @@ def test_payload_is_complete_and_json_safe(m):
 
 
 def test_period_windows_do_not_overlap(m):
-    cur = window(m.fact_week, m.weeks, len(m.weeks) - 1, 13)
-    prev = window(m.fact_week, m.weeks, len(m.weeks) - 14, 13)
+    cur = window(m.fact_week, m.weeks, len(m.weeks) - 1, 16)
+    prev = window(m.fact_week, m.weeks, len(m.weeks) - 17, comparison_weeks(len(m.weeks) - 1, 16))
     assert set(cur.week).isdisjoint(prev.week) and len(set(cur.week) | set(prev.week)) == 26
+
+
+def test_unequal_periods_compared_per_week(m):
+    t = payload(m)["totals"]["16W"]
+    assert t["cur"]["net_revenue_wk"] == pytest.approx(t["cur"]["net_revenue"] / 16, abs=0.01)
+    assert t["prev"]["net_revenue_wk"] == pytest.approx(t["prev"]["net_revenue"] / 10, abs=0.01)
+
+
+def test_cm2_bridge_adds_up(m):
+    for key, t in payload(m)["totals"].items():
+        b = t["bridge"]
+        assert b[0]["v"] + sum(x["v"] for x in b[1:-1]) == pytest.approx(b[-1]["v"], abs=1e-6), key

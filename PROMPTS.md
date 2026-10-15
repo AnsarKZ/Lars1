@@ -42,3 +42,16 @@ Tuning after the first run:
 - ACoS watch needs a 15 % margin over break-even (13 amber cells → 8).
 - Actions are ranked by the CM2 cost of one week's delay instead of a fixed horizon.
 - Phone-width labels were shortened.
+
+## 5. Redesign around comparison
+> *"I'm not sure I like it. Let's try a different format: % values need to be as important as €
+> values. The 'from net revenue to what is left' chart is not comparable to other periods, which
+> defeats the purpose; without comparison these values are nothing. Use 1, 4, 8, 16, 24 weeks."*
+
+The result:
+- The single-period waterfall was replaced by a **margin statement** (€ per week and % of net
+  revenue, now vs before, Δ % and Δ pp) and a **CM2 % bridge** in percentage points.
+- KPI tiles show € and % at equal weight.
+- Trends come in € and %, and marketplaces are compared side by side.
+- 16W and 24W have no full previous period in 26 weeks of data, so they are compared with all
+  earlier weeks as weekly averages, and the page says so.

@@ -25,7 +25,13 @@ KPI_DEFINITIONS = {
                      "Storage fee per unit and month × average stock, EU pool split by units sold",
                      "Cost of holding stock; real billing not in data"),
     "cm3": ("CM3", "EUR", "CM2 − storage (estimated)", "Shows the cost of slow movers"),
+    "cm1_pct": ("CM1 %", "%", "CM1 ÷ net revenue", "Product margin before marketing"),
     "cm2_pct": ("CM2 %", "%", "CM2 ÷ net revenue", "Margin quality"),
+    "cm3_pct": ("CM3 %", "%", "CM3 ÷ net revenue", "Margin after holding stock"),
+    "cost_ratios": ("Cost ratios", "%", "Landed cost, Amazon fees, ads and storage each ÷ net revenue",
+                    "Explain why a margin % moved (CM2 % bridge)"),
+    "per_week": ("€ per week", "EUR", "Period total ÷ number of weeks",
+                 "Makes periods of different length comparable"),
     "cm2_unit": ("CM2 per unit", "EUR", "CM2 ÷ units", "Comparable across countries"),
     "tacos": ("TACoS", "%", "Ad spend ÷ total net revenue", "How much the business leans on ads"),
     "acos": ("ACoS (net)", "%", "Ad spend ÷ net ad sales. ≈ Amazon console figure × (1 + VAT)",
@@ -56,6 +62,9 @@ def summarize(fw: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     g["cm1_pct"] = _div(g.cm1, g.net_revenue) * 100
     g["cm2_pct"] = _div(g.cm2, g.net_revenue) * 100
     g["cm3_pct"] = _div(g.cm3, g.net_revenue) * 100
+    g["cogs_pct"] = _div(g.cogs, g.net_revenue) * 100
+    g["fees_pct"] = _div(g.amazon_fees, g.net_revenue) * 100
+    g["storage_pct"] = _div(g.storage_cost, g.net_revenue) * 100
     g["cm2_unit"] = _div(g.cm2, g.units)
     g["tacos"] = _div(g.ad_spend, g.net_revenue) * 100
     g["acos"] = _div(g.ad_spend, g.ad_sales) * 100
@@ -64,6 +73,23 @@ def summarize(fw: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     g["buy_box"] = _div(g.bb_weighted, g.sessions)
     g["asp"] = _div(g.net_revenue, g.units)
     return g
+
+
+PER_WEEK = ["sessions", "units", "net_revenue", "cogs", "amazon_fees", "cm1", "ad_spend", "cm2",
+            "storage_cost", "cm3"]
+
+
+def per_week(g: pd.DataFrame, n_weeks: int) -> pd.DataFrame:
+    """Add <measure>_wk columns: totals ÷ weeks, so unequal periods compare fairly."""
+    g = g.copy()
+    for f in PER_WEEK:
+        g[f + "_wk"] = g[f] / n_weeks
+    return g
+
+
+def comparison_weeks(end: int, n: int) -> int:
+    """Weeks available for the comparison period before a window of n weeks ending at `end`."""
+    return max(0, min(n, end - n + 1))
 
 
 def window(fw: pd.DataFrame, weeks: list[pd.Timestamp], end: int, n: int) -> pd.DataFrame:
