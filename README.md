@@ -1,2 +1,3 @@
 # Lars Nysom Case Solutions
-solving case for Lars Part 1
+claude/task-planning-pitfalls is for solving case 1
+claude/performance-dashboard is for solving case 2
