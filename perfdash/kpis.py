@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 
 ADDITIVE = ["sessions", "units", "net_revenue", "cogs", "referral_fee", "fba_fee", "cm1",
-            "bb_weighted", "ad_spend", "ad_sales", "storage_cost", "cm2", "cm3"]
+            "bb_weighted", "ad_spend", "ad_sales", "impressions", "clicks", "ad_orders",
+            "storage_cost", "cm2", "cm3"]
 
 # key: (label, unit, formula in words, why it is on the dashboard)
 KPI_DEFINITIONS = {
@@ -38,6 +39,15 @@ KPI_DEFINITIONS = {
              "Ad efficiency"),
     "be_acos": ("Break-even ACoS", "%", "CM1 ÷ net revenue: above this every ad-driven sale loses money",
                 "The line ACoS must stay under"),
+    "ad_sales": ("Ad sales (net)", "EUR", "Sales Amazon credits to an ad click within 7 days, net of VAT",
+                 "What the ads bring in"),
+    "roas": ("ROAS", "×", "Net ad sales ÷ ad spend", "EUR of sales per EUR of ads"),
+    "ad_profit": ("Ad profit", "EUR",
+                  "Net ad sales × CM1 % of the product − ad spend: what ad-driven sales earn minus what the ads cost",
+                  "Positive = the ads pay for themselves"),
+    "ad_share": ("Ad share of sales", "%", "Net ad sales ÷ net revenue", "How much of the business comes through ads"),
+    "cpc": ("Cost per click", "EUR", "Ad spend ÷ clicks", "Price of traffic"),
+    "ad_cvr": ("Ad conversion", "%", "Ad orders ÷ clicks", "Do ad visitors buy?"),
     "cvr": ("Conversion", "%", "Units ÷ sessions", "Does the listing convince visitors?"),
     "buy_box": ("Buy box", "%", "Session-weighted share of page views with our offer in the basket box",
                 "Below 100 % someone else takes our sales"),
@@ -72,11 +82,18 @@ def summarize(fw: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     g["cvr"] = _div(g.units, g.sessions) * 100
     g["buy_box"] = _div(g.bb_weighted, g.sessions)
     g["asp"] = _div(g.net_revenue, g.units)
+    g["roas"] = _div(g.ad_sales, g.ad_spend)
+    g["ad_share"] = _div(g.ad_sales, g.net_revenue) * 100
+    g["cpc"] = _div(g.ad_spend, g.clicks)
+    g["ctr"] = _div(g.clicks, g.impressions) * 100
+    g["ad_cvr"] = _div(g.ad_orders, g.clicks) * 100
+    # CM1 earned on ad-driven sales (at the product's own CM1 %) minus what the ads cost
+    g["ad_profit"] = np.nan_to_num(g.ad_sales * _div(g.cm1, g.net_revenue)) - g.ad_spend
     return g
 
 
 PER_WEEK = ["sessions", "units", "net_revenue", "cogs", "amazon_fees", "cm1", "ad_spend", "cm2",
-            "storage_cost", "cm3"]
+            "storage_cost", "cm3", "ad_sales", "ad_profit", "clicks", "ad_orders"]
 
 
 def per_week(g: pd.DataFrame, n_weeks: int) -> pd.DataFrame:

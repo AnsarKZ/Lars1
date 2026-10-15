@@ -132,6 +132,27 @@ table.mkt { border-collapse: collapse; width: 100%; min-width: 760px; font-size:
 .mkt tr.total td { font-weight: 600; background: var(--bg); }
 .mkt td.big { font-size: 15px; font-weight: 600; }
 
+/* fold between management view and detail */
+.fold { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; border-top: 3px solid var(--accent); padding-top: 8px; margin-top: 8px; font: 600 12.5px var(--f-display); letter-spacing: 0.06em; text-transform: uppercase; }
+.fold-up { color: var(--muted); }
+.fold-down { color: var(--accent); }
+
+/* ads table */
+.ad-counts { display: flex; flex-wrap: wrap; gap: 6px; }
+table.ads { border-collapse: collapse; width: 100%; min-width: 980px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.ads th { font: 500 11.5px var(--f-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 8px 7px; border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none; }
+.ads th:nth-child(-n+3) { text-align: left; }
+.ads th[aria-sort] { color: var(--ink); }
+.ads td { padding: 8px 7px; vertical-align: top; border-bottom: 1px solid var(--grid); text-align: right; white-space: nowrap; }
+.ads td:nth-child(-n+3) { text-align: left; }
+.ads tr.total td { font-weight: 600; background: var(--bg); border-top: 1px solid var(--line); }
+.ads td.pos { color: var(--up); font-weight: 600; } .ads td.neg { color: var(--down); font-weight: 600; }
+.bullet { display: inline-flex; align-items: center; gap: 8px; }
+.bullet .track { position: relative; width: 90px; height: 8px; background: var(--grid); border-radius: 4px; }
+.bullet .fill { position: absolute; left: 0; top: 0; height: 8px; border-radius: 4px; }
+.bullet .be { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--ink); }
+.chip.neutral { background: var(--grid); color: var(--ink-2); }
+
 /* risks + actions */
 .risks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .risk { padding: 14px 16px; display: grid; gap: 4px; }
@@ -267,14 +288,6 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
     </div>
   </section>
 
-  <section aria-labelledby="h-mkt">
-    <div class="section-head">
-      <h2 id="h-mkt">Marketplaces compared</h2>
-      <p>Same period, same rules. Net revenue per week, margins as % of net revenue.</p>
-    </div>
-    <div class="table-wrap panel"><table class="mkt" id="mkt"></table></div>
-  </section>
-
   <section aria-labelledby="h-actions">
     <div class="section-head">
       <h2 id="h-actions">Three actions for next week</h2>
@@ -284,6 +297,34 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
   </section>
 
   <section aria-label="Risks"><div class="risks" id="risks"></div></section>
+
+  <section aria-labelledby="h-mkt">
+    <div class="section-head">
+      <h2 id="h-mkt">Marketplaces compared</h2>
+      <p>Same period, same rules. Net revenue per week, margins as % of net revenue.</p>
+    </div>
+    <div class="table-wrap panel"><table class="mkt" id="mkt"></table></div>
+  </section>
+
+  <div class="fold" role="separator" aria-label="End of management view">
+    <span class="fold-up">▲ One-minute management view</span>
+    <span class="fold-down">▼ Detail for marketplace managers and analysts</span>
+  </div>
+
+  <section aria-labelledby="h-ads">
+    <div class="section-head">
+      <h2 id="h-ads">Advertising: where ads pay off</h2>
+      <p id="ads-note"></p>
+    </div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Ad view" id="adview">
+        <button type="button" id="adv-sku" data-v="sku" aria-pressed="true">By product</button>
+        <button type="button" id="adv-mp" data-v="mp_sku" aria-pressed="false">By product × market</button>
+      </div>
+      <div id="ad-counts" class="ad-counts"></div>
+    </div>
+    <div class="table-wrap panel"><table class="ads" id="ads"></table></div>
+  </section>
 
   <section aria-labelledby="h-where">
     <div class="section-head">
@@ -699,7 +740,65 @@ function renderFooter() {
   $("rules-note").textContent = `Rules: stock critical if cover < reorder time and nothing inbound, watch if cover incl. inbound < reorder time + ${R.cover_watch_buffer_weeks} weeks or > ${R.overstock_weeks} weeks · buy box critical if < ${R.buybox_critical} % in both of the last 2 weeks, watch if < ${R.buybox_watch} % · CM2 critical if negative over the last ${R.cm2_window_weeks} weeks · ACoS watch if > break-even × ${R.acos_margin} over the 4 weeks before the reporting week · conversion watch if −${R.cvr_drop * 100} % and revenue watch if −${R.revenue_drop * 100} % vs own 4-week average · minimum volumes apply. Status does not depend on the period selector.`;
 }
 
-function renderAll() { renderCompare(); renderBand(); renderPnl(); renderBridge(); renderTrends(); renderMkt(); renderGrid(); }
+/* ---------------- advertising ---------------- */
+const VERDICT = { working: ["ok", "Working"], break_even: ["watch", "Break-even zone"], losing: ["critical", "Losing money"], too_little: ["neutral", "Too little spend"] };
+const VRANK = { losing: 3, break_even: 2, working: 1, too_little: 0 };
+const vchip = (v) => { const [c, t] = VERDICT[v]; return `<span class="chip ${c}">${c === "neutral" ? "" : `<span class="ic ${c}"></span>`}${t}</span>`; };
+state.adView = "sku"; state.adSort = { key: "ad_profit_wk", dir: 1 };
+const AD_COLS = [
+  { k: "product", l: "Product" }, { k: "mp", l: "Mkt" }, { k: "verdict", l: "Verdict" },
+  { k: "ad_spend_wk", l: "Ad spend / wk · Δ" }, { k: "ad_sales_wk", l: "Ad sales / wk · Δ" },
+  { k: "roas", l: "ROAS" }, { k: "acos", l: "ACoS / break-even · Δ" },
+  { k: "ad_profit_wk", l: "Ad profit / wk" }, { k: "ad_share", l: "Ad share" }, { k: "tacos", l: "TACoS" },
+  { k: "cpc", l: "Cost / click" }, { k: "ad_cvr", l: "Ad conv." },
+];
+function bullet(acos, be, verdict) {
+  if (acos == null || be == null) return "–";
+  const cap = 100, w = Math.min(acos, cap) / cap * 100, b = Math.min(be, cap) / cap * 100;
+  const col = { working: "var(--good)", break_even: "var(--warn)", losing: "var(--crit)", too_little: "var(--before)" }[verdict];
+  return `<span class="bullet"><span class="track"><span class="fill" style="width:${w}%;background:${col}"></span><span class="be" style="left:calc(${b}% - 1px)"></span></span><span>${pct(acos, 0)} <span class="muted">/ ${pct(be, 0)}</span></span></span>`;
+}
+function renderAds() {
+  const A = DATA.ads[state.period];
+  $("ads-note").innerHTML = `Complete weeks only: ${A.cur} vs ${A.prev}${A.prev_full ? "" : ` (weekly avg. of ${A.prev_weeks} earlier week${A.prev_weeks > 1 ? "s" : ""})`}. ` +
+    `The reporting week is left out because ad sales are still being credited for up to ${DATA.meta.attribution_days} days. ` +
+    `<strong>Ad profit</strong> = net ad sales × the product's CM1 % − ad spend. ACoS bar: coloured = ACoS (net), black tick = break-even.`;
+  [...$("adview").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === state.adView));
+  const rows = A.rows[state.adView].map(r => ({ ...r, ...r.cur, cur: r.cur,
+    d_spend: r.prev && r.prev.ad_spend_wk ? (r.cur.ad_spend_wk - r.prev.ad_spend_wk) / r.prev.ad_spend_wk * 100 : null,
+    d_acos: r.prev && r.prev.acos != null && r.cur.acos != null ? r.cur.acos - r.prev.acos : null }));
+  const counts = rows.reduce((c, r) => (c[r.verdict] = (c[r.verdict] || 0) + 1, c), {});
+  $("ad-counts").innerHTML = ["working", "break_even", "losing", "too_little"].filter(v => counts[v]).map(v => `${vchip(v)}<span class="muted" style="font-size:12.5px;margin-right:6px">× ${counts[v]}</span>`).join("");
+  const { key, dir } = state.adSort;
+  rows.sort((a, b) => {
+    const va = key === "verdict" ? VRANK[a.verdict] : a[key], vb = key === "verdict" ? VRANK[b.verdict] : b[key];
+    if (va == null && vb == null) return 0; if (va == null) return 1; if (vb == null) return -1;
+    return typeof va === "string" ? dir * va.localeCompare(vb) : dir * (va - vb);
+  });
+  const line = (r, total) => {
+    const c = r.cur, p = r.prev || {};
+    return `<tr class="${total ? "total" : ""}">
+      <td>${total ? "Total" : esc(r.product)}${total ? "" : `<div class="muted" style="font-size:11.5px">${r.sku}${LIFE[r.sku] === "Launch" ? " · Launch" : ""}</div>`}</td>
+      <td>${total ? "" : r.mp}</td><td>${total ? "" : vchip(r.verdict)}</td>
+      <td>${eur(c.ad_spend_wk)}<div>${dRel(c.ad_spend_wk, p.ad_spend_wk, 0)}</div></td>
+      <td>${eur(c.ad_sales_wk)}<div>${dRel(c.ad_sales_wk, p.ad_sales_wk, 1)}</div></td>
+      <td>${c.roas == null ? "–" : c.roas.toFixed(2) + "×"}</td>
+      <td>${bullet(c.acos, c.be_acos, total ? "too_little" : r.verdict)}<div>${dPP(c.acos, p.acos, -1)}</div></td>
+      <td class="${c.ad_profit_wk > 0 ? "pos" : c.ad_profit_wk < 0 ? "neg" : ""}">${eur(c.ad_profit_wk)}</td>
+      <td>${pct(c.ad_share, 0)}</td><td>${pct(c.tacos)}</td><td>${eur(c.cpc, 2)}</td><td>${pct(c.ad_cvr)}</td></tr>`;
+  };
+  let h = `<thead><tr>${AD_COLS.map(c => `<th data-k="${c.k}" ${state.adSort.key === c.k ? `aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""}>${c.l}${state.adSort.key === c.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
+  h += rows.map(r => line(r, false)).join("") + line({ cur: A.total.cur, prev: A.total.prev }, true);
+  $("ads").innerHTML = h + "</tbody>";
+  $("ads").querySelector("thead").onclick = (e) => {
+    const th = e.target.closest("th"); if (!th) return;
+    const k = th.dataset.k; state.adSort = { key: k, dir: state.adSort.key === k ? -state.adSort.dir : (k === "ad_profit_wk" ? 1 : -1) };
+    renderAds();
+  };
+}
+$("adview").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; state.adView = b.dataset.v; renderAds(); };
+
+function renderAll() { renderCompare(); renderBand(); renderPnl(); renderBridge(); renderTrends(); renderMkt(); renderAds(); renderGrid(); }
 renderHeader(); renderRisks(); renderActions(); renderMatrix(); renderStock(); renderFooter(); renderAll();
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderBridge(); renderTrends(); renderStock(); }, 120); });
 $("flagged").addEventListener("change", (e) => { state.flagged = e.target.checked; state.selected = null; renderMatrix(); renderGrid(); });

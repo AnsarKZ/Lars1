@@ -29,6 +29,22 @@ in Python and embedded, and the page only displays and filters them.
 - Trends in € and in %, with the selected and the comparison period shaded; marketplaces compared
   side by side.
 
+A **divider** after "Marketplaces compared" separates the one-minute management view (KPI tiles,
+margin statement, CM2 % bridge, trends, three actions, risks, marketplaces) from the detail for
+marketplace managers and analysts below it:
+- **Advertising: where ads pay off**, by product or by product × market. It shows ad spend and ad
+  sales per week with their changes, ROAS, ACoS against the product's break-even ACoS (as a bar),
+  **ad profit** (net ad sales × the product's CM1 % − ad spend), ad share of sales, TACoS, cost per
+  click and ad conversion, plus a verdict:
+  - *Working:* ACoS ≤ 85 % of break-even
+  - *Break-even zone:* ACoS between 85 % and 115 % of break-even
+  - *Losing money:* ACoS > 115 % of break-even
+  - *Too little spend:* below €20 per week
+
+  It uses complete weeks only: the reporting week is left out because ad sales are credited up to
+  7 days after the click.
+- the product × marketplace status grid, the sortable detail table, and stock cover.
+
 **Periods: 1W · 4W · 8W · 16W · 24W.** Each is compared with the same number of weeks before it.
 The data only covers 26 weeks, so 16W is compared with the 10 earlier weeks and 24W with the 2
 earlier weeks. That is why € changes are always **per week** and margins always **% of net
@@ -49,6 +65,11 @@ compared on one scale.
 | **Cause** | No purchase order after the last delivery (20.07.); cover fell below the reorder time. The SKU is the top seller: **43 % of all CM2**. | Launch budgets run at ~8× the other products and efficiency isn't improving after 4 months; every ad-driven sale costs more than it earns. | Another seller wins the basket button on our listing. Only FR is affected and our price is unchanged, so it's a reseller, competitor offer or hijacker. |
 | **Action** | Order now (MOQ 1,000; previous orders were 3,000), expedite part of it. Cut ads on this SKU in the EU to stretch stock and move that budget to the coral variant (168 weeks of stock) as a substitute. | Bring ACoS under break-even, starting with IT. Keep the converting exact-match campaigns, pause the weakest auto campaigns. | Check the offer list in Seller Central, report unauthorised sellers via Brand Registry, pause FR ads on this listing until the buy box is back. |
 | **Expected effect** | Avoids ~5.1 weeks out of stock: **~1,900 units / €13.9k CM2**, plus the lost ranking just before Q4. Each week of delay costs **~€2.7k**. | Spend at break-even ACoS ≈ €3.6k/week, so **≈ €3.9k/week less ad cost**, stopping most of the **€2.4k/week** loss. | **≈ 18 units/week** back: ≈ €750/week net revenue, ≈ €180/week CM2. |
+
+**Ads overall:** over the last 4 complete weeks, ads **lose about €2.7k per week** in total (ad
+profit −€2,741/week at ROAS 2.15). That is entirely the carafe (−€3.9k/week). Ads for the 750 ml
+anthracite bottle (+€509/week) and the muesli containers (+€488/week) clearly pay off. The coral
+bottle and the 1 l glass bottle are slightly negative.
 
 **Watch list (no action this week):** the coral bottle ties up **€33k** at 168 weeks of cover
 (EU) and 76 weeks (UK), about €790/month storage. The SPS-2 price rise on 03.08. (€24.99 → €27.99)
@@ -109,6 +130,11 @@ also writes every table to `out/model/*.csv`: the shape the warehouse tables wou
 | Buy box | Session-weighted average of `buy_box_pct` |
 | Weeks of cover | Available stock ÷ average units per week of the last 4 weeks, per stock region |
 | Reorder time | Lead time (days) ÷ 7 |
+| Ad sales (net) | Sales credited to an ad click within 7 days, net of VAT |
+| ROAS | Net ad sales ÷ ad spend |
+| **Ad profit** | Net ad sales × CM1 % of the product − ad spend (positive = ads pay for themselves) |
+| Ad share of sales | Net ad sales ÷ net revenue |
+| Cost per click, ad conversion | Ad spend ÷ clicks, ad orders ÷ clicks |
 
 **Deliberately left out of the main screens:** impressions, CTR and CPC (ad-console detail; ACoS vs
 break-even drives the decision), page views (sessions suffice), reserved stock (not sellable),

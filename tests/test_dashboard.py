@@ -107,3 +107,20 @@ def test_cm2_bridge_adds_up(m):
     for key, t in payload(m)["totals"].items():
         b = t["bridge"]
         assert b[0]["v"] + sum(x["v"] for x in b[1:-1]) == pytest.approx(b[-1]["v"], abs=1e-6), key
+
+
+def test_ad_profit_formula(m):
+    g = summarize(m.fact_week, ["sku"])
+    r = g.loc["LN-MUE-2"]
+    assert r.ad_profit == pytest.approx(r.ad_sales * r.cm1 / r.net_revenue - r.ad_spend)
+    assert r.roas == pytest.approx(r.ad_sales / r.ad_spend)
+
+
+def test_ad_verdicts_use_complete_weeks_only(m):
+    ads = payload(m)["ads"]["4W"]
+    assert ads["cur"] == "24.08.–20.09.2026"                     # reporting week left out
+    by_sku = {r["sku"]: r["verdict"] for r in ads["rows"]["sku"]}
+    assert by_sku["LN-KAR-1800"] == "losing"
+    assert {by_sku[s] for s in ("LN-MUE-2", "LN-ISO-750-ANT", "LN-SPS-2")} == {"working"}
+    carafe = [r for r in ads["rows"]["mp_sku"] if r["sku"] == "LN-KAR-1800"]
+    assert len(carafe) == 4 and all(r["verdict"] == "losing" for r in carafe)

@@ -85,13 +85,15 @@ def build(data_dir: Path = DATA_DIR) -> Model:
     a["ad_spend"] = a.spend * f                                              # spend is already net
     a["ad_sales"] = a.sales_7d * f / (1 + a.marketplace.map(vat))            # ad sales are gross
     fact_ads_day = a[["date", "week", "marketplace", "sku", "campaign_name", "targeting_type",
-                      "daily_budget", "clicks", "ad_spend", "ad_sales", "orders_7d"]]
+                      "daily_budget", "impressions", "clicks", "ad_spend", "ad_sales", "orders_7d"]
+                     ].rename(columns={"orders_7d": "ad_orders"})
 
     # ------------------------------------------------------------------ weekly
     keys = ["week", "marketplace", "sku"]
     w = fact_sales_day.groupby(keys)[["sessions", "units", "net_revenue", "cogs", "referral_fee",
                                       "fba_fee", "cm1", "bb_weighted"]].sum()
-    w = w.join(fact_ads_day.groupby(keys)[["ad_spend", "ad_sales"]].sum(), how="left").fillna(0.0)
+    w = w.join(fact_ads_day.groupby(keys)[["ad_spend", "ad_sales", "impressions", "clicks", "ad_orders"]].sum(),
+               how="left").fillna(0.0)
     w = w.reset_index()
     weeks = sorted(w.week.unique())
     # only complete Monday-Sunday weeks

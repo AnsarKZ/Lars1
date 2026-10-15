@@ -18,7 +18,8 @@ from .rules import LEVEL_RANK, evaluate, stock_status
 TEMPLATE = Path(__file__).with_name("template.html")
 FIELDS = ["sessions", "units", "net_revenue", "cogs", "amazon_fees", "cm1", "ad_spend", "cm2",
           "storage_cost", "cm3", "cm1_pct", "cm2_pct", "cm3_pct", "cogs_pct", "fees_pct",
-          "storage_pct", "cm2_unit", "tacos", "acos", "be_acos", "cvr", "buy_box", "asp"]
+          "storage_pct", "cm2_unit", "tacos", "acos", "be_acos", "cvr", "buy_box", "asp",
+          "roas", "ad_share", "cpc", "ctr", "ad_cvr", "ad_profit"]
 FIELDS += [f + "_wk" for f in PER_WEEK]
 
 
@@ -36,6 +37,46 @@ def _row(s: pd.Series) -> dict:
 
 def _week_label(w: pd.Timestamp) -> str:
     return f"{w:%d.%m.}–{w + pd.Timedelta(days=6):%d.%m.%Y}"
+
+
+def ad_verdict(r: pd.Series, n_weeks: int) -> str:
+    """working | break_even | losing | too_little: ACoS against the product's own break-even."""
+    if r.ad_spend / n_weeks < RULES["min_ad_spend_week"] or not r.be_acos or r.be_acos != r.be_acos:
+        return "too_little"
+    ratio = r.acos / r.be_acos
+    if ratio <= RULES["ads_working"]:
+        return "working"
+    return "losing" if ratio > RULES["acos_margin"] else "break_even"
+
+
+def ads_payload(m: Model, names) -> dict:
+    """Ad performance per period on COMPLETE weeks only: the window ends one week before the
+    reporting week, because ad sales are credited up to 7 days after the click."""
+    fw, weeks = m.fact_week, m.weeks
+    end = len(weeks) - 2
+    out = {}
+    for key, n in PERIODS.items():
+        k = comparison_weeks(end, n)
+        cur, prev = window(fw, weeks, end, n), window(fw, weeks, end - n, k)
+        res = {"cur": f"{weeks[end - n + 1]:%d.%m.}–{weeks[end] + pd.Timedelta(days=6):%d.%m.%Y}",
+               "prev": (f"{weeks[end - n - k + 1]:%d.%m.}–{weeks[end - n] + pd.Timedelta(days=6):%d.%m.%Y}"
+                        if k else None),
+               "prev_weeks": k, "prev_full": k == n, "rows": {}}
+        for by, label in ((["sku"], "sku"), (["marketplace", "sku"], "mp_sku")):
+            gc = per_week(summarize(cur, by), n)
+            gp = per_week(summarize(prev, by), k) if k else None
+            rows = []
+            for idx, r in gc.iterrows():
+                p = gp.loc[idx] if gp is not None and idx in gp.index else None
+                mp, sku = idx if isinstance(idx, tuple) else ("All", idx)
+                rows.append({"sku": sku, "product": names[sku], "mp": mp, "verdict": ad_verdict(r, n),
+                             "cur": _row(r), "prev": _row(p) if p is not None else None})
+            res["rows"][label] = rows
+        t = per_week(summarize(cur, []), n).iloc[0]
+        tp = per_week(summarize(prev, []), k).iloc[0] if k else None
+        res["total"] = {"cur": _row(t), "prev": _row(tp) if tp is not None else None}
+        out[key] = res
+    return out
 
 
 def payload(m: Model) -> dict:
@@ -131,6 +172,7 @@ def payload(m: Model) -> dict:
         "stock": stock_rows,
         "risks": risks,
         "actions": [a.__dict__ for a in top_actions(m)],
+        "ads": ads_payload(m, names),
         "products": [{"sku": s, "product": names[s], "lifecycle": life[s]} for s in m.dim_product.sku],
         "marketplaces": list(m.dim_marketplace.marketplace),
         "kpi_definitions": [{"key": k, "label": v[0], "unit": v[1], "formula": v[2], "why": v[3]}

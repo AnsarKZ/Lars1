@@ -55,3 +55,18 @@ The result:
 - Trends come in € and %, and marketplaces are compared side by side.
 - 16W and 24W have no full previous period in 26 weeks of data, so they are compared with all
   earlier weeks as weekly averages, and the page says so.
+
+## 6. Ad visibility and a clear split between management and detail
+> *"How come we have no visibility on ad spending and its effect on sales? We need a table with ad
+> KPIs so we can see for which items ads are working and for which they are not. Also draw a line
+> after the marketplaces table: above it the one-minute management view, below it the detail for
+> marketplace managers and analytics."*
+
+The result:
+- An **advertising table** by product or product × market: spend and ad sales per week with
+  change, ROAS, ACoS against break-even (bar), **ad profit**, ad share, TACoS, cost per click and
+  ad conversion, plus a verdict (*working* / *break-even zone* / *losing money*). It runs on
+  complete weeks only because of the 7-day credit window.
+- A **divider** after "Marketplaces compared". The three actions and risk tiles moved above it.
+- The finding: ads lose ~€2.7k/week overall, all of it from the carafe, while anthracite and muesli
+  ads pay off.

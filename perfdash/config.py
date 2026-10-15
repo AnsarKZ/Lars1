@@ -35,6 +35,8 @@ RULES = {
     "cm2_window_weeks": 4,              # CM2 judged over the last 4 weeks
     "acos_window_weeks": 4,             # ending the week BEFORE the reporting week
     "acos_margin": 1.15,                # amber only if ACoS > break-even x 1.15 (ignore noise)
+    "ads_working": 0.85,                # ad verdict "working" if ACoS <= break-even x 0.85
+    "min_ad_spend_week": 20.0,          # below this per week: "too little spend to judge"
     # change vs own history
     "cvr_drop": 0.25,                   # conversion -25 % vs own 4-week average
     "revenue_drop": 0.30,               # net revenue -30 % vs own 4-week average
