@@ -4,16 +4,22 @@ A prototype that checks every 30 minutes whether each sales channel (Amazon DE/F
 shows the stock it should, and raises alerts when it doesn't. It replays the case data package
 run by run in time order, as if the data were arriving live.
 
+**The replay output is in [`results/`](results/)**, so you can see what the robot found without
+running anything:
+- [`results/console.txt`](results/console.txt): what the robot printed, round by round (alerts and daily digests)
+- [`results/summary.md`](results/summary.md): every alert with first seen / opened / resolved times
+- [`results/alerts.jsonl`](results/alerts.jsonl): every alert event as structured data
+- [`results/rounds.jsonl`](results/rounds.jsonl): one log line per 30-minute round
+
+The case input files are not part of this repository. To re-run the replay or the tests, put the
+files from the case ZIP (`00_Datenbeschreibung.md`, `01_…` to `07_…`) into `data/`:
+
 ```bash
 pip install pandas pytest          # Python ≥ 3.11
-python -m stockrecon               # needs PYTHONPATH=src, or: pip install -e .
-python -m stockrecon --pause 0.05  # slower, for the live demo
-python -m stockrecon --until 2026-09-25T12:00 --min-severity INFO
-python -m pytest                   # 13 tests, incl. a full-week replay
+PYTHONPATH=src python -m stockrecon               # replay, output to out/
+PYTHONPATH=src python -m stockrecon --pause 0.05  # slower, for the live demo
+python -m pytest                   # 13 tests (skipped if data/ is empty)
 ```
-
-Output: alerts on the console, plus `out/alerts.jsonl` (every alert event), `out/rounds.jsonl`
-(one structured log line per round) and `out/summary.md` (alert table + days of cover).
 
 ---
 

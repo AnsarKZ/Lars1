@@ -1,0 +1,235 @@
+[22.09. 00:20 Vienna | 22:20 UTC] 🟡 NEW   #1 WARNING  Unknown listing AMZ-DE LN-TB-350-ALT
+                            Not in SKU mapping (first seen 22.09. 00:15). Status ACTIVE, shows 7, 0 units ordered in the last 7 days. Orders on unmapped listings may never be deducted from warehouse stock.
+                            → Master data via Teams
+
+──── Daily digest 22.09. 08:20 Vienna ────
+Open alerts (1):
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+──────────────────────────────────────
+
+
+──── Daily digest 23.09. 08:20 Vienna ────
+Open alerts (1):
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+Low stock (< 2 days of cover):
+  LN-GK-18         15 units  ≈ 1.3 days
+──────────────────────────────────────
+
+
+──── Daily digest 24.09. 08:20 Vienna ────
+Open alerts (1):
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+──────────────────────────────────────
+
+[24.09. 08:50 Vienna | 06:50 UTC] 🟠 NEW   #2 HIGH     AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+                            2 rejections in a row since 24.09. 08:03: "Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX". Category: required attribute missing (master data). Channel keeps its old stock and counts down on its own; warehouse now has 22. HTTP said 'accepted', only the processing report shows the error.
+                            → Content / PIM via Teams, e-mail
+
+──── Daily digest 25.09. 08:20 Vienna ────
+Open alerts (2):
+  #2   HIGH     since 24.09. 08:50  AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+──────────────────────────────────────
+
+[25.09. 08:50 Vienna | 06:50 UTC] 🟠 STILL #2 HIGH     AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+                            50 rejections in a row since 24.09. 08:03: "Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX". Category: required attribute missing (master data). Channel keeps its old stock and counts down on its own; warehouse now has 21. HTTP said 'accepted', only the processing report shows the error.
+                            → Content / PIM via Teams, e-mail
+[25.09. 09:50 Vienna | 07:50 UTC] 🟡 NEW   #3 WARNING  AMZ-IT LN-SPM-SET (Salz- und Pfeffermühlen-Set) is INACTIVE although in stock
+                            Should show 59, shows 0. Customers cannot buy it. Typical sales here ~1.8/day (~EUR 49/day lost).
+                            → Marketplace management via Teams
+[25.09. 12:50 Vienna | 10:50 UTC] 🟠 NEW   #5 HIGH     AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+                            2 rejections in a row since 25.09. 12:08: "Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig". Category: invalid attribute value (listing settings). Channel keeps its old stock and counts down on its own; warehouse now has 47. HTTP said 'accepted', only the processing report shows the error.
+                            → Marketplace management via Teams, e-mail
+[25.09. 16:20 Vienna | 14:20 UTC] 🟠 NEW   #6 HIGH     AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            Shows 42, more than the 38 in the warehouse (should show 35). Safety buffer is gone. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via Teams, e-mail
+[26.09. 05:50 Vienna | 03:50 UTC] 🟡 NEW   #7 WARNING  Readback for SHOPIFY failing
+                            8 queries returned no stock (e.g. TIMEOUT). Treated as 'unknown', not as 0.
+                            → IT / Data via Teams
+[26.09. 07:20 Vienna | 05:20 UTC] ✅ FIXED #7 Readback for SHOPIFY failing  (lasted 2:00:00)
+
+──── Daily digest 26.09. 08:20 Vienna ────
+Open alerts (5):
+  #2   HIGH     since 24.09. 08:50  AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+  #5   HIGH     since 25.09. 12:50  AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+  #6   HIGH     since 25.09. 13:50  AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+  #3   WARNING  since 25.09. 09:20  AMZ-IT LN-SPM-SET (Salz- und Pfeffermühlen-Set) is INACTIVE although in stock
+Low stock (< 2 days of cover):
+  LN-IF750-ANT     29 units  ≈ 1.3 days
+──────────────────────────────────────
+
+[26.09. 08:50 Vienna | 06:50 UTC] 🟠 STILL #2 HIGH     AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+                            98 rejections in a row since 24.09. 08:03: "Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX". Category: required attribute missing (master data). Channel keeps its old stock and counts down on its own; warehouse now has 19. HTTP said 'accepted', only the processing report shows the error.
+                            → Content / PIM via Teams, e-mail
+[26.09. 10:20 Vienna | 08:20 UTC] 🟠 NEW   #8 HIGH     AMZ-FR LN-BK-BAM-L (Brotkasten Bambus groß) shows too much stock
+                            Shows 19, more than the 18 in the warehouse (should show 16). Safety buffer is gone. Likely cause: updates rejected since 24.09. 08:03 ("Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX").
+                            → Marketplace management via Teams, e-mail
+[26.09. 12:50 Vienna | 10:50 UTC] 🟠 STILL #5 HIGH     AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+                            50 rejections in a row since 25.09. 12:08: "Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig". Category: invalid attribute value (listing settings). Channel keeps its old stock and counts down on its own; warehouse now has 24. HTTP said 'accepted', only the processing report shows the error.
+                            → Marketplace management via Teams, e-mail
+[26.09. 14:20 Vienna | 12:20 UTC] 🔴 WORSE #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 37, warehouse has only 22 (~23 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[26.09. 19:20 Vienna | 17:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 36, warehouse has only 19 (~22 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[26.09. 23:20 Vienna | 21:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 36, warehouse has only 18 (~22 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 01:50 Vienna | 23:50 UTC] 🔴 NEW   #9 CRITICAL Push job is not running
+                            No stock push since 27.09. 00:30 (~2 runs missed). No channel receives stock updates; buffers are the only protection.
+                            → IT / Data via phone (on-call), Teams, e-mail
+[27.09. 03:20 Vienna | 01:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 36, warehouse has only 18 (~21 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 05:50 Vienna | 03:50 UTC] 🔴 STILL #9 CRITICAL Push job is not running
+                            No stock push since 27.09. 00:30 (~10 runs missed). No channel receives stock updates; buffers are the only protection.
+                            → IT / Data via phone (on-call), Teams, e-mail
+[27.09. 07:20 Vienna | 05:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 36, warehouse has only 18 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 07:20 Vienna | 05:20 UTC] ✅ FIXED #9 Push job is not running  (lasted 5:30:00)
+
+──── Daily digest 27.09. 08:20 Vienna ────
+Open alerts (6):
+  #6   CRITICAL since 25.09. 13:50  AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+  #2   HIGH     since 24.09. 08:50  AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+  #5   HIGH     since 25.09. 12:50  AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+  #8   HIGH     since 26.09. 09:20  AMZ-FR LN-BK-BAM-L (Brotkasten Bambus groß) shows too much stock
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+  #3   WARNING  since 25.09. 09:20  AMZ-IT LN-SPM-SET (Salz- und Pfeffermühlen-Set) is INACTIVE although in stock
+Low stock (< 2 days of cover):
+  LN-IF750-ANT     18 units  ≈ 0.9 days
+──────────────────────────────────────
+
+[27.09. 08:50 Vienna | 06:50 UTC] 🟠 STILL #2 HIGH     AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+                            135 rejections in a row since 24.09. 08:03: "Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX". Category: required attribute missing (master data). Channel keeps its old stock and counts down on its own; warehouse now has 16. HTTP said 'accepted', only the processing report shows the error.
+                            → Content / PIM via Teams, e-mail
+[27.09. 10:20 Vienna | 08:20 UTC] 🟠 STILL #8 HIGH     AMZ-FR LN-BK-BAM-L (Brotkasten Bambus groß) shows too much stock
+                            Shows 19, more than the 15 in the warehouse (should show 13). Safety buffer is gone. Likely cause: updates rejected since 24.09. 08:03 ("Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX").
+                            → Marketplace management via Teams, e-mail
+[27.09. 11:20 Vienna | 09:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 35, warehouse has only 15 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 12:50 Vienna | 10:50 UTC] 🟠 STILL #5 HIGH     AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+                            87 rejections in a row since 25.09. 12:08: "Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig". Category: invalid attribute value (listing settings). Channel keeps its old stock and counts down on its own; warehouse now has 14. HTTP said 'accepted', only the processing report shows the error.
+                            → Marketplace management via Teams, e-mail
+[27.09. 15:20 Vienna | 13:20 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 31, warehouse has only 9 (~21 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 19:50 Vienna | 17:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 26, warehouse has only -2 (~22 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 19:50 Vienna | 17:50 UTC] 🔴 NEW   #10 CRITICAL LN-IF750-ANT oversold: warehouse at -2
+                            2 units sold that do not exist. Still offered on: AMZ-DE 26. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[27.09. 23:50 Vienna | 21:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 26, warehouse has only -3 (~21 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[27.09. 23:50 Vienna | 21:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -3
+                            3 units sold that do not exist. Still offered on: AMZ-DE 26. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 03:50 Vienna | 01:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 24, warehouse has only -4 (~21 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 03:50 Vienna | 01:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -4
+                            4 units sold that do not exist. Still offered on: AMZ-DE 24. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 07:50 Vienna | 05:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 24, warehouse has only -5 (~21 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 07:50 Vienna | 05:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -5
+                            5 units sold that do not exist. Still offered on: AMZ-DE 24. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 08:20 Vienna | 06:20 UTC] 🔴 NEW   #11 CRITICAL AMZ-UK unreachable (access denied)
+                            8/8 listings failed in run 28.09. 08:00: 403 Unauthorized: access token expired. Retrying will not help: renew the API token.
+                            → IT / Data via phone (on-call), Teams, e-mail
+
+──── Daily digest 28.09. 08:20 Vienna ────
+Open alerts (8):
+  #6   CRITICAL since 25.09. 13:50  AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+  #10  CRITICAL since 27.09. 19:50  LN-IF750-ANT oversold: warehouse at -5
+  #11  CRITICAL since 28.09. 08:20  AMZ-UK unreachable (access denied)
+  #2   HIGH     since 24.09. 08:50  AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+  #5   HIGH     since 25.09. 12:50  AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+  #8   HIGH     since 26.09. 09:20  AMZ-FR LN-BK-BAM-L (Brotkasten Bambus groß) shows too much stock
+  #1   WARNING  since 22.09. 00:20  Unknown listing AMZ-DE LN-TB-350-ALT
+  #3   WARNING  since 25.09. 09:20  AMZ-IT LN-SPM-SET (Salz- und Pfeffermühlen-Set) is INACTIVE although in stock
+Low stock (< 2 days of cover):
+  LN-IF750-ANT     -5 units  ≈ 0.0 days
+──────────────────────────────────────
+
+[28.09. 08:50 Vienna | 06:50 UTC] 🟠 STILL #2 HIGH     AMZ-FR rejects every update for LN-BK-BAM-L (Brotkasten Bambus groß)
+                            183 rejections in a row since 24.09. 08:03: "Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX". Category: required attribute missing (master data). Channel keeps its old stock and counts down on its own; warehouse now has 15. HTTP said 'accepted', only the processing report shows the error.
+                            → Content / PIM via Teams, e-mail
+[28.09. 10:20 Vienna | 08:20 UTC] 🟠 STILL #8 HIGH     AMZ-FR LN-BK-BAM-L (Brotkasten Bambus groß) shows too much stock
+                            Shows 19, more than the 15 in the warehouse (should show 13). Safety buffer is gone. Likely cause: updates rejected since 24.09. 08:03 ("Pflichtattribut item_package_weight fehlt für Produkttyp BREAD_BOX").
+                            → Marketplace management via Teams, e-mail
+[28.09. 11:50 Vienna | 09:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 23, warehouse has only -6 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 11:50 Vienna | 09:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -6
+                            6 units sold that do not exist. Still offered on: AMZ-DE 23. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 12:20 Vienna | 10:20 UTC] 🔴 STILL #11 CRITICAL AMZ-UK unreachable (access denied)
+                            8/8 listings failed in run 28.09. 12:00: 403 Unauthorized: access token expired. Retrying will not help: renew the API token.
+                            → IT / Data via phone (on-call), Teams, e-mail
+[28.09. 12:50 Vienna | 10:50 UTC] 🟠 STILL #5 HIGH     AMZ-DE rejects every update for LN-IF750-ANT (Isolierflasche 750 ml Anthrazit)
+                            135 rejections in a row since 25.09. 12:08: "Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig". Category: invalid attribute value (listing settings). Channel keeps its old stock and counts down on its own; warehouse now has -7. HTTP said 'accepted', only the processing report shows the error.
+                            → Marketplace management via Teams, e-mail
+[28.09. 13:50 Vienna | 11:50 UTC] ✅ FIXED #11 AMZ-UK unreachable (access denied)  (lasted 5:30:00)
+[28.09. 15:50 Vienna | 13:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 19, warehouse has only -9 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 15:50 Vienna | 13:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -9
+                            9 units sold that do not exist. Still offered on: AMZ-DE 19. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 19:50 Vienna | 17:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 16, warehouse has only -13 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 19:50 Vienna | 17:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -13
+                            13 units sold that do not exist. Still offered on: AMZ-DE 16. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+[28.09. 23:50 Vienna | 21:50 UTC] 🔴 STILL #6 CRITICAL AMZ-DE LN-IF750-ANT (Isolierflasche 750 ml Anthrazit) shows too much stock
+                            OVERSELLING: shows 16, warehouse has only -13 (~20 sold/day across channels). Orders beyond stock cannot be fulfilled. Likely cause: updates rejected since 25.09. 12:08 ("Attribut fulfillment_availability: Wert für lead_time_to_ship_max_days ungültig").
+                            → Marketplace management via phone (on-call), Teams, e-mail
+[28.09. 23:50 Vienna | 21:50 UTC] 🔴 STILL #10 CRITICAL LN-IF750-ANT oversold: warehouse at -13
+                            13 units sold that do not exist. Still offered on: AMZ-DE 16. Prepare customer communication.
+                            → Operations / Customer service via phone (on-call), Teams, e-mail
+
+# Replay summary
+
+Rounds: 336 · alerts opened: 11 · still open at end: 7
+
+| # | Severity (max) | Type | Scope | First seen (Vienna) | Alert opened | Resolved | Team |
+|---|---|---|---|---|---|---|---|
+| 1 | WARNING | UNMAPPED_LISTING | AMZ-DE LN-TB-350-ALT | 22.09. 00:20 | 22.09. 00:20 | open | Master data |
+| 2 | HIGH | LISTING_REJECTED | AMZ-FR LN-BK-BAM-L | 24.09. 08:50 | 24.09. 08:50 | open | Content / PIM |
+| 3 | WARNING | LISTING_INACTIVE | AMZ-IT LN-SPM-SET | 25.09. 09:20 | 25.09. 09:50 | open | Marketplace management |
+| 4 | INFO | DATA_QUALITY | global | 25.09. 12:20 | 25.09. 12:20 | 25.09. 18:50 | IT / Data |
+| 5 | HIGH | LISTING_REJECTED | AMZ-DE LN-IF750-ANT | 25.09. 12:50 | 25.09. 12:50 | open | Marketplace management |
+| 6 | CRITICAL | SHOWN_TOO_HIGH | AMZ-DE LN-IF750-ANT | 25.09. 13:50 | 25.09. 16:20 | open | Marketplace management |
+| 7 | WARNING | READBACK_FAILED | SHOPIFY | 26.09. 05:20 | 26.09. 05:50 | 26.09. 07:20 | IT / Data |
+| 8 | HIGH | SHOWN_TOO_HIGH | AMZ-FR LN-BK-BAM-L | 26.09. 09:20 | 26.09. 10:20 | open | Marketplace management |
+| 9 | CRITICAL | PUSH_JOB_DOWN | global | 27.09. 01:50 | 27.09. 01:50 | 27.09. 07:20 | IT / Data |
+| 10 | CRITICAL | STOCK_NEGATIVE | LN-IF750-ANT | 27.09. 19:50 | 27.09. 19:50 | open | Operations / Customer service |
+| 11 | CRITICAL | CHANNEL_PUSH_FAILING | AMZ-UK | 28.09. 08:20 | 28.09. 08:20 | 28.09. 13:50 | IT / Data |
+
+## Days of cover at end of replay
+
+| SKU | Stock | Units/day | Days left |
+|---|---|---|---|
+| LN-BK-BAM-L | 13 | 1.6 | 8.3 |
+| LN-GK-18 | 86 | 9.2 | 9.4 |
+| LN-IF750-ANT | -13 | 19.7 | 0.0 |
+| LN-IF750-KOR | 107 | 4.7 | 22.7 |
+| LN-KAF-MAN | 4 | 8.2 | 0.5 |
+| LN-KM-SET | 59 | 6.6 | 9.0 |
+| LN-SPM-SET | 25 | 10.2 | 2.5 |
+| LN-TB-350 | 121 | 9.6 | 12.6 |
+
+## Alerts by severity
+
+INFO: 1, WARNING: 3, HIGH: 3, CRITICAL: 4
+
