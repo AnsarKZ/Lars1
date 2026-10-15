@@ -83,6 +83,9 @@ h3 { font-size: 15px; }
 .seg button:hover:not([aria-pressed="true"]) { background: var(--accent-soft); color: var(--ink); }
 .compare { font-size: 12.5px; color: var(--ink-2); }
 .compare .partial { color: var(--warn-ink); }
+.seg.small button { padding: 4px 11px; font-size: 12px; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 10px; }
+.scope { font: 500 13px var(--f-body); color: var(--accent); margin-left: 6px; }
 
 /* KPI tiles: € and % at equal weight */
 .band { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
@@ -125,10 +128,11 @@ table.pnl { border-collapse: collapse; width: 100%; min-width: 760px; font-size:
 .trends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
 /* marketplaces */
-table.mkt { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
-.mkt th { font: 500 11.5px var(--f-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.mkt { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.mkt th { font: 500 11.5px var(--f-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 8px 7px; border-bottom: 1px solid var(--line); white-space: normal; vertical-align: bottom; max-width: 96px; line-height: 1.25; }
+.mkt th:first-child { max-width: none; }
 .mkt th:first-child, .mkt td:first-child { text-align: left; }
-.mkt td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+.mkt td { padding: 8px 7px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
 .mkt tr.total td { font-weight: 600; background: var(--bg); }
 .mkt td.big { font-size: 15px; font-weight: 600; }
 
@@ -252,13 +256,15 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
   </header>
 
   <section aria-label="Key figures">
+    <div class="tools"><span class="eyebrow">Key figures</span><div class="seg small" role="group" aria-label="Market for key figures" id="f-tiles"></div></div>
     <div class="band" id="band"></div>
     <div class="flag" id="band-flag" style="margin-top:8px"></div>
   </section>
 
   <section class="panel pnl-panel" aria-labelledby="h-pnl">
     <div class="section-head">
-      <h2 id="h-pnl">Margin statement</h2>
+      <h2 id="h-pnl">Margin statement <span class="scope" id="s-pnl"></span></h2>
+      <div class="seg small" role="group" aria-label="Market for margin statement" id="f-pnl"></div>
       <p>€ per week and % of net revenue, now vs before. The bars compare the % now (blue) with before (grey).</p>
     </div>
     <div class="table-wrap"><table class="pnl" id="pnl"></table></div>
@@ -266,23 +272,24 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
 
   <section aria-labelledby="h-trend">
     <div class="section-head">
-      <h2 id="h-trend">What changed and why</h2>
+      <h2 id="h-trend">What changed and why <span class="scope" id="s-changes"></span></h2>
+      <div class="seg small" role="group" aria-label="Market for changes and trends" id="f-changes"></div>
       <p>Trend bands: dark = selected period, light = the period it is compared with.</p>
     </div>
     <div class="trends">
       <div class="panel chart-panel">
-        <h3>Why CM2 % moved</h3>
-        <div class="legend" style="margin-top:6px"><span>Percentage points of net revenue: a cost growing faster than revenue pulls CM2 % down</span></div>
+        <h3>Why contribution margin 2 % moved</h3>
+        <div class="legend" style="margin-top:6px"><span>Percentage points of net revenue: a cost growing faster than revenue pulls contribution margin 2 % (CM2 %) down</span></div>
         <div class="chart" id="bridge"></div>
       </div>
       <div class="panel chart-panel">
         <h3>€ per week</h3>
-        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>Net revenue</span><span><i style="background: var(--s2)"></i>CM2</span></div>
+        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>Net revenue</span><span><i style="background: var(--s2)"></i>Contribution margin 2 (CM2)</span></div>
         <div class="chart" id="trend-eur"></div>
       </div>
       <div class="panel chart-panel">
         <h3>% of net revenue</h3>
-        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>CM1 %</span><span><i style="background: var(--s2)"></i>CM2 %</span><span><i style="background: var(--s3)"></i>Ad spend (TACoS)</span></div>
+        <div class="legend" style="margin-top:6px"><span><i style="background: var(--s1)"></i>Contribution margin 1 %</span><span><i style="background: var(--s2)"></i>Contribution margin 2 %</span><span><i style="background: var(--s3)"></i>Ad spend (TACoS)</span></div>
         <div class="chart" id="trend-pct"></div>
       </div>
     </div>
@@ -291,7 +298,7 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
   <section aria-labelledby="h-actions">
     <div class="section-head">
       <h2 id="h-actions">Three actions for next week</h2>
-      <p>Ranked by what one more week of waiting costs in CM2.</p>
+      <p>Ranked by what one more week of waiting costs in contribution margin (CM2).</p>
     </div>
     <div class="actions" id="actions"></div>
   </section>
@@ -300,8 +307,9 @@ table.defs { border-collapse: collapse; width: 100%; font-size: 13px; min-width:
 
   <section aria-labelledby="h-mkt">
     <div class="section-head">
-      <h2 id="h-mkt">Marketplaces compared</h2>
-      <p>Same period, same rules. Net revenue per week, margins as % of net revenue.</p>
+      <h2 id="h-mkt">Marketplaces compared <span class="scope" id="s-mkt"></span></h2>
+      <div class="seg small" role="group" aria-label="Market drill-down" id="f-mkt"></div>
+      <p id="mkt-note">Same period, same rules. Net revenue per week, margins as % of net revenue. Pick a market to see its products.</p>
     </div>
     <div class="table-wrap panel"><table class="mkt" id="mkt"></table></div>
   </section>
@@ -426,6 +434,15 @@ function showTip(html, x, y) {
 }
 const hideTip = () => { tip.hidden = true; };
 const P = () => DATA.periods[state.period];
+state.f = { tiles: "ALL", pnl: "ALL", changes: "ALL", mkt: "ALL" };
+const scoped = (key) => state.f[key] === "ALL" ? DATA.totals[state.period] : DATA.totals[state.period].by_mp[state.f[key]];
+const SCOPE_RENDER = {};
+function mfilter(key) {
+  const el = $("f-" + key);
+  el.innerHTML = ["ALL", ...DATA.marketplaces].map(m => `<button type="button" id="f-${key}-${m}" data-m="${m}" aria-pressed="${state.f[key] === m}">${m === "ALL" ? "All markets" : m}</button>`).join("");
+  el.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; state.f[key] = b.dataset.m;
+    [...el.children].forEach(x => x.setAttribute("aria-pressed", x.dataset.m === state.f[key])); SCOPE_RENDER[key](); };
+}
 const prevWord = () => P().prev_full ? "before" : `prev. ${P().prev_weeks} wk avg.`;
 
 /* ---------------- header ---------------- */
@@ -447,7 +464,7 @@ function renderCompare() {
 
 /* ---------------- tiles ---------------- */
 function renderBand() {
-  const c = DATA.totals[state.period].cur, p = DATA.totals[state.period].prev || {};
+  const sc = scoped("tiles"), c = sc.cur, p = sc.prev || {};
   const t = (label, eurV, eurSub, eurD, pctV, pctSub, pctD, hero) => `
     <div class="panel tile${hero ? " hero" : ""}">
       <div class="label">${label}</div>
@@ -460,13 +477,13 @@ function renderBand() {
   $("band").innerHTML =
     t("Net revenue", eurK(c.net_revenue), `period total${wk}`, dRel(c.net_revenue_wk, p.net_revenue_wk, 1),
       int(c.units_wk), "units per week", dRel(c.units_wk, p.units_wk, 1)) +
-    t("CM1 · before ads", eurK(c.cm1), "period total", dRel(c.cm1_wk, p.cm1_wk, 1),
+    t("Contribution margin 1 · before ads", eurK(c.cm1), "period total", dRel(c.cm1_wk, p.cm1_wk, 1),
       pct(c.cm1_pct), "of net revenue", dPP(c.cm1_pct, p.cm1_pct, 1)) +
     t("Ad spend", eurK(c.ad_spend), "period total", dRel(c.ad_spend_wk, p.ad_spend_wk, -1),
       pct(c.tacos), "TACoS · of net revenue", dPP(c.tacos, p.tacos, -1)) +
-    t("CM2 · after ads", eurK(c.cm2), "period total", dRel(c.cm2_wk, p.cm2_wk, 1),
+    t("Contribution margin 2 · after ads", eurK(c.cm2), "period total", dRel(c.cm2_wk, p.cm2_wk, 1),
       pct(c.cm2_pct), "of net revenue", dPP(c.cm2_pct, p.cm2_pct, 1), true) +
-    t("CM3 · after storage", eurK(c.cm3), "period total", dRel(c.cm3_wk, p.cm3_wk, 1),
+    t("Contribution margin 3 · after storage", eurK(c.cm3), "period total", dRel(c.cm3_wk, p.cm3_wk, 1),
       pct(c.cm3_pct), "of net revenue", dPP(c.cm3_pct, p.cm3_pct, 1));
   $("band-flag").textContent = `€ change is per week, so periods of different length compare fairly. ` +
     `Last week's ACoS reads high: ad sales are credited up to ${DATA.meta.attribution_days} days after the click (export ${DATA.meta.export_date}).`;
@@ -474,16 +491,17 @@ function renderBand() {
 
 /* ---------------- margin statement ---------------- */
 function renderPnl() {
-  const c = DATA.totals[state.period].cur, p = DATA.totals[state.period].prev || {};
+  const sc = scoped("pnl"), c = sc.cur, p = sc.prev || {};
+  $("s-pnl").textContent = state.f.pnl === "ALL" ? "" : `· ${state.f.pnl}`;
   const lines = [
     { k: "Net revenue", f: "net_revenue", pf: null, dir: 1, cls: "head" },
     { k: "Landed cost (incl. freight & customs)", f: "cogs", pf: "cogs_pct", dir: -1, cls: "cost" },
     { k: "Amazon fees (commission + FBA)", f: "amazon_fees", pf: "fees_pct", dir: -1, cls: "cost" },
-    { k: "CM1", f: "cm1", pf: "cm1_pct", dir: 1, cls: "sub" },
+    { k: "Contribution margin 1 (CM1)", f: "cm1", pf: "cm1_pct", dir: 1, cls: "sub" },
     { k: "Ad spend", f: "ad_spend", pf: "tacos", dir: -1, cls: "cost" },
-    { k: "CM2", f: "cm2", pf: "cm2_pct", dir: 1, cls: "sub" },
+    { k: "Contribution margin 2 (CM2)", f: "cm2", pf: "cm2_pct", dir: 1, cls: "sub" },
     { k: "Storage (est.)", f: "storage_cost", pf: "storage_pct", dir: -1, cls: "cost" },
-    { k: "CM3", f: "cm3", pf: "cm3_pct", dir: 1, cls: "sub" },
+    { k: "Contribution margin 3 (CM3)", f: "cm3", pf: "cm3_pct", dir: 1, cls: "sub" },
   ];
   const sign = (l, v) => v == null ? null : (l.dir < 0 ? -v : v);
   let h = `<thead><tr><th></th><th>Period</th><th class="sep" colspan="3">€ per week</th><th class="sep" colspan="3">% of net revenue</th></tr>
@@ -501,7 +519,8 @@ function renderPnl() {
 
 /* ---------------- CM2 % bridge ---------------- */
 function renderBridge() {
-  const steps = DATA.totals[state.period].bridge, el = $("bridge");
+  const steps = scoped("changes").bridge, el = $("bridge");
+  $("s-changes").textContent = state.f.changes === "ALL" ? "" : `· ${state.f.changes}`;
   if (!steps) { el.innerHTML = `<p class="muted">No earlier period in the data.</p>`; return; }
   const W = Math.max(280, el.clientWidth), H = 220, pad = { l: 38, r: 4, t: 22, b: 40 };
   let run = 0; const pts = steps.map(s => { if (s.total) { run = s.v; return { ...s, a: 0, b: s.v }; } const a = run; run += s.v; return { ...s, a, b: run }; });
@@ -534,7 +553,7 @@ function renderBridge() {
 
 /* ---------------- trends ---------------- */
 function lineChart(el, series, fmtAxis, fmtTip, minZero) {
-  const rows = DATA.trend, W = Math.max(280, el.clientWidth), H = 220, pad = { l: 48, r: 12, t: 12, b: 30 };
+  const rows = DATA.trend_by_mp[state.f.changes], W = Math.max(280, el.clientWidth), H = 220, pad = { l: 48, r: 12, t: 12, b: 30 };
   const vals = rows.flatMap(r => series.map(s => r[s.f])).filter(v => v != null);
   const lo = minZero ? Math.min(0, ...vals) : Math.floor(Math.min(...vals) / 5) * 5, hi = Math.max(...vals) * 1.06;
   const L = rows.length - 1, x = (i) => pad.l + i * (W - pad.l - pad.r) / L;
@@ -568,20 +587,33 @@ function lineChart(el, series, fmtAxis, fmtTip, minZero) {
   hit.addEventListener("mouseleave", () => { xh.setAttribute("visibility", "hidden"); hideTip(); });
 }
 function renderTrends() {
-  lineChart($("trend-eur"), [{ f: "net_revenue", c: "var(--s1)", n: "Net revenue" }, { f: "cm2", c: "var(--s2)", n: "CM2" }],
+  lineChart($("trend-eur"), [{ f: "net_revenue", c: "var(--s1)", n: "Net revenue" }, { f: "cm2", c: "var(--s2)", n: "Contribution margin 2" }],
     (v) => "€" + Math.round(v / 1000) + "k", (v) => eur(v), true);
-  lineChart($("trend-pct"), [{ f: "cm1_pct", c: "var(--s1)", n: "CM1 %" }, { f: "cm2_pct", c: "var(--s2)", n: "CM2 %" }, { f: "tacos", c: "var(--s3)", n: "Ad spend (TACoS)" }],
+  lineChart($("trend-pct"), [{ f: "cm1_pct", c: "var(--s1)", n: "Contribution margin 1 %" }, { f: "cm2_pct", c: "var(--s2)", n: "Contribution margin 2 %" }, { f: "tacos", c: "var(--s3)", n: "Ad spend (TACoS)" }],
     (v) => Math.round(v) + " %", (v) => pct(v), true);
 }
 
 /* ---------------- marketplaces ---------------- */
 function renderMkt() {
-  const m = DATA.by_marketplace[state.period], tot = DATA.totals[state.period];
-  const rows = DATA.marketplaces.map(k => ({ k, ...m[k] })).concat([{ k: "Total", cur: tot.cur, prev: tot.prev, total: true }]);
-  let h = `<thead><tr><th>Market</th><th>Net revenue / wk</th><th>Δ</th><th>CM1 %</th><th>Δ pp</th><th>TACoS</th><th>Δ pp</th><th>CM2 %</th><th>Δ pp</th><th>CM2 / wk</th><th>Δ</th><th>Conv.</th><th>Buy box</th></tr></thead><tbody>`;
+  const mp = state.f.mkt, tot = DATA.totals[state.period];
+  let rows, first;
+  if (mp === "ALL") {
+    const m = DATA.by_marketplace[state.period];
+    rows = DATA.marketplaces.map(k => ({ k, ...m[k] })).concat([{ k: "Total", cur: tot.cur, prev: tot.prev, total: true }]);
+    first = "Market";
+  } else {
+    const g = DATA.grid[state.period];
+    rows = DATA.products.filter(p => g[`${mp}|${p.sku}`]).map(p => ({ k: p.product, sku: p.sku, ...g[`${mp}|${p.sku}`] }))
+      .sort((a, b) => b.cur.net_revenue_wk - a.cur.net_revenue_wk)
+      .concat([{ k: `Total ${mp}`, ...tot.by_mp[mp], total: true }]);
+    first = `Product in ${mp}`;
+  }
+  $("s-mkt").textContent = mp === "ALL" ? "" : `· ${mp} by product`;
+  let h = `<thead><tr><th>${first}</th><th>Net revenue / wk</th><th>Δ</th><th>Contribution margin 1 %</th><th>Δ pp</th><th>TACoS (ads % of revenue)</th><th>Δ pp</th><th>Contribution margin 2 %</th><th>Δ pp</th><th>Contribution margin 2 / wk</th><th>Δ</th><th>Conv.</th><th>Buy box</th></tr></thead><tbody>`;
   rows.forEach(r => {
     const c = r.cur, p = r.prev || {};
-    h += `<tr class="${r.total ? "total" : ""}"><td>${r.k}</td><td>${eur(c.net_revenue_wk)}</td><td>${dRel(c.net_revenue_wk, p.net_revenue_wk, 1)}</td>
+    const name = r.sku ? `${esc(r.k)}<div class="muted" style="font-size:11.5px">${r.sku}${LIFE[r.sku] === "Launch" ? " · Launch" : ""}</div>` : esc(r.k);
+    h += `<tr class="${r.total ? "total" : ""}"><td>${name}</td><td>${eur(c.net_revenue_wk)}</td><td>${dRel(c.net_revenue_wk, p.net_revenue_wk, 1)}</td>
       <td>${pct(c.cm1_pct)}</td><td>${dPP(c.cm1_pct, p.cm1_pct, 1)}</td><td>${pct(c.tacos)}</td><td>${dPP(c.tacos, p.tacos, -1)}</td>
       <td class="big">${pct(c.cm2_pct)}</td><td>${dPP(c.cm2_pct, p.cm2_pct, 1)}</td><td>${eur(c.cm2_wk)}</td><td>${dRel(c.cm2_wk, p.cm2_wk, 1)}</td>
       <td>${pct(c.cvr)}</td><td>${pct(c.buy_box, 0)}</td></tr>`;
@@ -594,11 +626,11 @@ function renderRisks() {
   const r = DATA.risks;
   $("risks").innerHTML = `
     <div class="panel risk"><div class="eyebrow">Stock-out risk</div>
-      <div class="big num">${eur(r.stockout_cm2)} <span class="muted" style="font-size:13px;font-weight:400">CM2 at risk</span></div>
+      <div class="big num">${eur(r.stockout_cm2)} <span class="muted" style="font-size:13px;font-weight:400">contribution margin at risk</span></div>
       <p>Runs out before a new order can arrive: ${r.stockout_items.join(", ")}.</p></div>
     <div class="panel risk"><div class="eyebrow">Loss-making ads</div>
       <div class="big num">${eur(r.loss_ad_spend_week)}<span class="muted" style="font-size:13px;font-weight:400"> per week</span></div>
-      <p>Ad spend on products with negative CM2 (${r.loss_items.join(", ")}); CM2 there ${eur(r.loss_cm2_week)} per week.</p></div>
+      <p>Ad spend on products with negative contribution margin 2 (${r.loss_items.join(", ")}); their CM2 is ${eur(r.loss_cm2_week)} per week.</p></div>
     <div class="panel risk"><div class="eyebrow">Tied-up capital</div>
       <div class="big num">${eur(r.overstock_value)}</div>
       <p>Stock above ${DATA.rules.overstock_weeks} weeks of cover (${r.overstock_items.join(", ")}), about ${eur(r.overstock_storage_month)} storage per month.</p></div>`;
@@ -607,7 +639,7 @@ function renderActions() {
   $("actions").innerHTML = DATA.actions.map((a, i) => `
     <article class="panel action">
       <div class="rank">${i + 1}</div>
-      <div class="head"><h3>${esc(a.title)}</h3><span class="cod">waiting costs ≈ ${eur(a.cost_of_delay_week)} CM2 / week</span></div>
+      <div class="head"><h3>${esc(a.title)}</h3><span class="cod">waiting costs ≈ ${eur(a.cost_of_delay_week)} contribution margin / week</span></div>
       <div class="scope">${esc(a.scope)}</div>
       <dl><dt>Number</dt><dd>${esc(a.number)}</dd><dt>Cause</dt><dd>${esc(a.cause)}</dd>
           <dt>Action</dt><dd>${esc(a.action)}</dd><dt>Effect</dt><dd>${esc(a.effect)}</dd></dl>
@@ -647,7 +679,7 @@ function renderMatrix() {
 const COLS = [
   { key: "product", label: "Product" }, { key: "mp", label: "Mkt" }, { key: "level", label: "Status" },
   { key: "net_revenue_wk", label: "Net rev. / wk" }, { key: "d_rev", label: "Δ" },
-  { key: "cm2_pct", label: "CM2 %" }, { key: "d_cm2pp", label: "Δ pp" }, { key: "cm2_unit", label: "CM2 / unit" },
+  { key: "cm2_pct", label: "Contr. margin 2 %" }, { key: "d_cm2pp", label: "Δ pp" }, { key: "cm2_unit", label: "Contr. margin 2 / unit" },
   { key: "tacos", label: "TACoS" }, { key: "acos", label: "ACoS (net)" }, { key: "be_acos", label: "Break-even" },
   { key: "cvr", label: "Conv." }, { key: "d_cvrpp", label: "Δ pp" }, { key: "buy_box", label: "Buy box" },
   { key: "cover", label: "Cover (wk)" }, { key: "reasons", label: "Why flagged" },
@@ -762,7 +794,7 @@ function renderAds() {
   const A = DATA.ads[state.period];
   $("ads-note").innerHTML = `Complete weeks only: ${A.cur} vs ${A.prev}${A.prev_full ? "" : ` (weekly avg. of ${A.prev_weeks} earlier week${A.prev_weeks > 1 ? "s" : ""})`}. ` +
     `The reporting week is left out because ad sales are still being credited for up to ${DATA.meta.attribution_days} days. ` +
-    `<strong>Ad profit</strong> = net ad sales × the product's CM1 % − ad spend. ACoS bar: coloured = ACoS (net), black tick = break-even.`;
+    `<strong>Ad profit</strong> = net ad sales × the product's contribution margin 1 % − ad spend. ACoS bar: coloured = ACoS (net), black tick = break-even.`;
   [...$("adview").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === state.adView));
   const rows = A.rows[state.adView].map(r => ({ ...r, ...r.cur, cur: r.cur,
     d_spend: r.prev && r.prev.ad_spend_wk ? (r.cur.ad_spend_wk - r.prev.ad_spend_wk) / r.prev.ad_spend_wk * 100 : null,
@@ -798,6 +830,8 @@ function renderAds() {
 }
 $("adview").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; state.adView = b.dataset.v; renderAds(); };
 
+Object.assign(SCOPE_RENDER, { tiles: renderBand, pnl: renderPnl, changes: () => { renderBridge(); renderTrends(); }, mkt: renderMkt });
+["tiles", "pnl", "changes", "mkt"].forEach(mfilter);
 function renderAll() { renderCompare(); renderBand(); renderPnl(); renderBridge(); renderTrends(); renderMkt(); renderAds(); renderGrid(); }
 renderHeader(); renderRisks(); renderActions(); renderMatrix(); renderStock(); renderFooter(); renderAll();
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderBridge(); renderTrends(); renderStock(); }, 120); });

@@ -124,3 +124,16 @@ def test_ad_verdicts_use_complete_weeks_only(m):
     assert {by_sku[s] for s in ("LN-MUE-2", "LN-ISO-750-ANT", "LN-SPS-2")} == {"working"}
     carafe = [r for r in ads["rows"]["mp_sku"] if r["sku"] == "LN-KAR-1800"]
     assert len(carafe) == 4 and all(r["verdict"] == "losing" for r in carafe)
+
+
+def test_market_filter_slices_add_up(m):
+    d = payload(m)
+    for key, t in d["totals"].items():
+        mps = t["by_mp"].values()
+        assert sum(x["cur"]["net_revenue"] for x in mps) == pytest.approx(t["cur"]["net_revenue"], abs=0.1), key
+        assert sum(x["cur"]["cm2"] for x in mps) == pytest.approx(t["cur"]["cm2"], abs=0.1), key
+        for mp, x in t["by_mp"].items():
+            b = x["bridge"]
+            assert b[0]["v"] + sum(s["v"] for s in b[1:-1]) == pytest.approx(b[-1]["v"], abs=1e-6), (key, mp)
+    assert set(d["trend_by_mp"]) == {"ALL", "DE", "FR", "IT", "UK"}
+    assert all(len(rows) == 26 for rows in d["trend_by_mp"].values())

@@ -91,6 +91,18 @@ def payload(m: Model) -> dict:
     def table(frame: pd.DataFrame, by: list[str], n: int):
         return per_week(summarize(frame, by), n) if not frame.empty else None
 
+    def scope(tc, tp) -> dict:
+        """Totals now vs before, plus the CM2 % bridge, for one slice (all markets or one)."""
+        c, p = tc.iloc[0], (tp.iloc[0] if tp is not None else None)
+        bridge = None
+        if p is not None:   # why CM2 % moved, in percentage points; the steps add up exactly
+            bridge = [{"k": "CM2 % before", "v": float(p.cm2_pct), "total": True},
+                      {"k": "Landed cost", "v": float(p.cogs_pct - c.cogs_pct)},
+                      {"k": "Amazon fees", "v": float(p.fees_pct - c.fees_pct)},
+                      {"k": "Ad spend", "v": float(p.tacos - c.tacos)},
+                      {"k": "CM2 % now", "v": float(c.cm2_pct), "total": True}]
+        return {"cur": _row(c), "prev": _row(p) if p is not None else None, "bridge": bridge}
+
     periods, totals, by_mp, grid = {}, {}, {}, {}
     for key, n in PERIODS.items():
         k = comparison_weeks(end, n)                      # weeks available before the window
@@ -100,16 +112,10 @@ def payload(m: Model) -> dict:
             "cur": label(end - n + 1, end),
             "prev": label(end - n - k + 1, end - n) if k else None,
         }
-        tc, tp = table(cur, [], n), table(prev, [], k)
-        c, p = tc.iloc[0], (tp.iloc[0] if tp is not None else None)
-        bridge = None
-        if p is not None:   # why CM2 % moved, in percentage points; the steps add up exactly
-            bridge = [{"k": "CM2 % before", "v": float(p.cm2_pct), "total": True},
-                      {"k": "Landed cost", "v": float(p.cogs_pct - c.cogs_pct)},
-                      {"k": "Amazon fees", "v": float(p.fees_pct - c.fees_pct)},
-                      {"k": "Ad spend", "v": float(p.tacos - c.tacos)},
-                      {"k": "CM2 % now", "v": float(c.cm2_pct), "total": True}]
-        totals[key] = {"cur": _row(c), "prev": _row(p) if p is not None else None, "bridge": bridge}
+        totals[key] = scope(table(cur, [], n), table(prev, [], k))
+        totals[key]["by_mp"] = {mp: scope(table(cur[cur.marketplace == mp], [], n),
+                                          table(prev[prev.marketplace == mp], [], k))
+                                for mp in m.dim_marketplace.marketplace}
         mc, mpv = table(cur, ["marketplace"], n), table(prev, ["marketplace"], k)
         by_mp[key] = {mp: {"cur": _row(mc.loc[mp]),
                            "prev": _row(mpv.loc[mp]) if mpv is not None and mp in mpv.index else None}
@@ -119,8 +125,12 @@ def payload(m: Model) -> dict:
                                      "prev": _row(gp.loc[(mp, sku)]) if gp is not None and (mp, sku) in gp.index else None}
                      for mp, sku in gc.index}
 
-    trend = per_week(summarize(fw, ["week"]), 1)
-    trend_rows = [{"week": f"{w:%d.%m.}", "label": _week_label(w), **_row(r)} for w, r in trend.iterrows()]
+    def trend_rows(frame: pd.DataFrame) -> list[dict]:
+        t = per_week(summarize(frame, ["week"]), 1)
+        return [{"week": f"{w:%d.%m.}", "label": _week_label(w), **_row(r)} for w, r in t.iterrows()]
+
+    trends = {"ALL": trend_rows(fw), **{mp: trend_rows(fw[fw.marketplace == mp])
+                                        for mp in m.dim_marketplace.marketplace}}
 
     _, status = evaluate(m)
     cells = []
@@ -167,7 +177,8 @@ def payload(m: Model) -> dict:
         "totals": totals,
         "by_marketplace": by_mp,
         "grid": grid,
-        "trend": trend_rows,
+        "trend": trends["ALL"],
+        "trend_by_mp": trends,
         "cells": cells,
         "stock": stock_rows,
         "risks": risks,

@@ -70,3 +70,16 @@ The result:
 - A **divider** after "Marketplaces compared". The three actions and risk tiles moved above it.
 - The finding: ads lose ~€2.7k/week overall, all of it from the carafe, while anthracite and muesli
   ads pay off.
+
+## 7. Readability and market drill-down
+> *"Add 'Contribution Margin' wherever it says CM, for better readability, and add a market filter to
+> each table in the one-minute section so I can see the numbers for each market."*
+
+The result:
+- Contribution margin 1/2/3 is spelled out in tiles, the margin statement, the bridge, legends,
+  table headers, action texts and KPI definitions.
+- Each management table has an *All markets / DE / FR / IT / UK* switch: tiles, margin statement,
+  and bridge plus trends.
+- "Marketplaces compared" turns into a product breakdown when a market is picked.
+- The per-market numbers come from the same central KPI code. A test checks that markets add up
+  to the total and that every market's bridge adds up.

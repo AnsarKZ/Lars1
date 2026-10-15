@@ -29,6 +29,11 @@ in Python and embedded, and the page only displays and filters them.
 - Trends in € and in %, with the selected and the comparison period shaded; marketplaces compared
   side by side.
 
+**Market filter:** each table in the one-minute view has its own *All markets · DE · FR · IT · UK*
+switch, so you can see the key figures, the margin statement, the bridge and trends for one market.
+In "Marketplaces compared", picking a market breaks it down by product. Labels spell out
+**contribution margin** (CM1 = after product and Amazon costs, CM2 = after ads, CM3 = after storage).
+
 A **divider** after "Marketplaces compared" separates the one-minute management view (KPI tiles,
 margin statement, CM2 % bridge, trends, three actions, risks, marketplaces) from the detail for
 marketplace managers and analysts below it:

@@ -104,7 +104,7 @@ def evaluate(m: Model) -> tuple[list[Signal], pd.DataFrame]:
         # --- CM2 over the last 4 weeks
         if row.net_revenue >= R["min_net_revenue_4w"] and row.cm2 < 0:
             signals.append(Signal(mp, sku, "cm2", "critical", "cm2",
-                                  f"CM2 EUR {row.cm2:,.0f} in 4 weeks ({row.cm2_pct:.0f} % of net revenue)"))
+                                  f"Contribution margin 2 (CM2) EUR {row.cm2:,.0f} in 4 weeks ({row.cm2_pct:.0f} % of net revenue)"))
 
         # --- ACoS vs break-even, 4 weeks ending the week before (attribution complete)
         if (mp, sku) in ads4.index:

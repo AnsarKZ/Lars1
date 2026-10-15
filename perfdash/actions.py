@@ -46,7 +46,7 @@ def stock_actions(m: Model) -> list[Action]:
                     "Cut ads on this SKU in the region to stretch stock, and shift that budget to the "
                     "overstocked colour variant as a substitute."),
             effect=(f"Without action ~{s.weeks_short:.1f} weeks out of stock: ~{s.units_at_risk:,.0f} units "
-                    f"and EUR {s.cm2_at_risk:,.0f} CM2 lost, plus lost ranking before Q4. Each week of "
+                    f"and EUR {s.cm2_at_risk:,.0f} contribution margin (CM2) lost, plus lost ranking before Q4. Each week of "
                     f"delay adds ~EUR {s.rate_week * s.cm2_unit:,.0f}."),
             cost_of_delay_week=s.rate_week * s.cm2_unit, kind="stock"))
     return out
@@ -70,7 +70,7 @@ def loss_actions(m: Model) -> list[Action]:
         out.append(Action(
             title=f"Cut ad budgets for {_name(m, sku)}",
             scope=f"{sku} · {', '.join(losing.index.get_level_values(1))}",
-            number=(f"CM2 −EUR {loss_week:,.0f}/week; ads EUR {spend_week:,.0f}/week. "
+            number=(f"Contribution margin 2 (CM2) −EUR {loss_week:,.0f}/week; ads EUR {spend_week:,.0f}/week. "
                     f"ACoS (net) {mps} vs break-even ~{a.be_acos.mean():.0f} %."),
             cause="Budgets run at ~8× the other products since launch and efficiency is not improving; "
                   "every ad-driven sale costs more than it earns.",
@@ -112,7 +112,7 @@ def buybox_actions(m: Model) -> list[Action]:
                    "and pause ads on this listing until the buy box is back (we pay for clicks that "
                    "sell someone else's offer).",
             effect=(f"≈ {lost_units:.0f} units/week back, ≈ EUR {lost_units * after.asp.mean():,.0f}/week "
-                    f"net revenue and EUR {lost_units * cm2_unit:,.0f}/week CM2."),
+                    f"net revenue and EUR {lost_units * cm2_unit:,.0f}/week contribution margin (CM2)."),
             cost_of_delay_week=lost_units * cm2_unit, kind="buy_box"))
     return out
 
