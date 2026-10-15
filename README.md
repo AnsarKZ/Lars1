@@ -5,10 +5,16 @@ FBA stock, controlling product master, FX rates). It shows management in one min
 business runs down to contribution margin, and marketplace managers which product in which
 marketplace needs attention now.
 
+**The finished dashboard is in [`site/index.html`](site/index.html).** Download it and open it in a
+browser; it needs no installation.
+
+The case input files are not part of this repository. To rebuild the dashboard or run the tests,
+put the five files from the case ZIP (`00_Datenbeschreibung.md`, `01_…` to `05_…`) into `data/`:
+
 ```bash
 pip install pandas openpyxl pytest   # Python >= 3.11
 python -m perfdash                   # -> site/index.html (+ model tables in out/model/)
-python -m pytest                     # 10 tests
+python -m pytest                     # 12 tests (skipped if data/ is empty)
 ```
 
 Open `site/index.html` in a browser. It is a single self-contained file: the numbers are computed
