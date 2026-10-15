@@ -68,7 +68,7 @@ The result:
   ad conversion, plus a verdict (*working* / *break-even zone* / *losing money*). It runs on
   complete weeks only because of the 7-day credit window.
 - A **divider** after "Marketplaces compared". The three actions and risk tiles moved above it.
-- The finding: ads lose ~€2.7k/week overall, all of it from the carafe, while anthracite and muesli
+- The finding: ads lose ~€2.8k/week overall, all of it from the carafe, while anthracite and muesli
   ads pay off.
 
 ## 7. Readability and market drill-down
@@ -83,3 +83,12 @@ The result:
 - "Marketplaces compared" turns into a product breakdown when a market is picked.
 - The per-market numbers come from the same central KPI code. A test checks that markets add up
   to the total and that every market's bridge adds up.
+
+## 8. Same for advertising
+> *"Do this also to the advertising table."*
+
+The result:
+- The ad table got the market switch: one market shows that market's products plus a market total.
+- Labels spell out contribution margin.
+- Ad profit is now valued per product × market and then summed, so totals equal the sum of their
+  rows (the earlier blended calculation was 1–2 % off).

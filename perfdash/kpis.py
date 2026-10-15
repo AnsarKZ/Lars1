@@ -37,13 +37,13 @@ KPI_DEFINITIONS = {
     "tacos": ("TACoS", "%", "Ad spend ÷ total net revenue", "How much the business leans on ads"),
     "acos": ("ACoS (net)", "%", "Ad spend ÷ net ad sales. ≈ Amazon console figure × (1 + VAT)",
              "Ad efficiency"),
-    "be_acos": ("Break-even ACoS", "%", "CM1 ÷ net revenue: above this every ad-driven sale loses money",
+    "be_acos": ("Break-even ACoS", "%", "Contribution margin 1 ÷ net revenue: above this every ad-driven sale loses money",
                 "The line ACoS must stay under"),
     "ad_sales": ("Ad sales (net)", "EUR", "Sales Amazon credits to an ad click within 7 days, net of VAT",
                  "What the ads bring in"),
     "roas": ("ROAS", "×", "Net ad sales ÷ ad spend", "EUR of sales per EUR of ads"),
     "ad_profit": ("Ad profit", "EUR",
-                  "Net ad sales × CM1 % of the product − ad spend: what ad-driven sales earn minus what the ads cost",
+                  "Net ad sales × contribution margin 1 % of the product − ad spend: what ad-driven sales earn minus what the ads cost",
                   "Positive = the ads pay for themselves"),
     "ad_share": ("Ad share of sales", "%", "Net ad sales ÷ net revenue", "How much of the business comes through ads"),
     "cpc": ("Cost per click", "EUR", "Ad spend ÷ clicks", "Price of traffic"),
@@ -87,8 +87,12 @@ def summarize(fw: pd.DataFrame, by: list[str]) -> pd.DataFrame:
     g["cpc"] = _div(g.ad_spend, g.clicks)
     g["ctr"] = _div(g.clicks, g.impressions) * 100
     g["ad_cvr"] = _div(g.ad_orders, g.clicks) * 100
-    # CM1 earned on ad-driven sales (at the product's own CM1 %) minus what the ads cost
-    g["ad_profit"] = np.nan_to_num(g.ad_sales * _div(g.cm1, g.net_revenue)) - g.ad_spend
+    # Contribution margin 1 earned on ad-driven sales minus what the ads cost. Each sale is valued
+    # at its own product's CM1 % in its own market, then summed, so totals equal the sum of rows.
+    fine = fw.groupby(list(dict.fromkeys(by + ["marketplace", "sku"])))[
+        ["ad_sales", "cm1", "net_revenue", "ad_spend"]].sum()
+    fine_profit = np.nan_to_num(fine.ad_sales * _div(fine.cm1, fine.net_revenue)) - fine.ad_spend
+    g["ad_profit"] = fine_profit.groupby(level=by).sum() if by else float(fine_profit.sum())
     return g
 
 

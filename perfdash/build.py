@@ -75,6 +75,12 @@ def ads_payload(m: Model, names) -> dict:
         t = per_week(summarize(cur, []), n).iloc[0]
         tp = per_week(summarize(prev, []), k).iloc[0] if k else None
         res["total"] = {"cur": _row(t), "prev": _row(tp) if tp is not None else None}
+        res["total_by_mp"] = {}
+        for mp in m.dim_marketplace.marketplace:
+            c_mp, p_mp = cur[cur.marketplace == mp], prev[prev.marketplace == mp]
+            res["total_by_mp"][mp] = {
+                "cur": _row(per_week(summarize(c_mp, []), n).iloc[0]),
+                "prev": _row(per_week(summarize(p_mp, []), k).iloc[0]) if k else None}
         out[key] = res
     return out
 

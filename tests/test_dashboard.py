@@ -111,8 +111,9 @@ def test_cm2_bridge_adds_up(m):
 
 def test_ad_profit_formula(m):
     g = summarize(m.fact_week, ["sku"])
-    r = g.loc["LN-MUE-2"]
+    r = summarize(m.fact_week[m.fact_week.marketplace == "DE"], ["sku"]).loc["LN-MUE-2"]
     assert r.ad_profit == pytest.approx(r.ad_sales * r.cm1 / r.net_revenue - r.ad_spend)
+    r = g.loc["LN-MUE-2"]
     assert r.roas == pytest.approx(r.ad_sales / r.ad_spend)
 
 
@@ -137,3 +138,12 @@ def test_market_filter_slices_add_up(m):
             assert b[0]["v"] + sum(s["v"] for s in b[1:-1]) == pytest.approx(b[-1]["v"], abs=1e-6), (key, mp)
     assert set(d["trend_by_mp"]) == {"ALL", "DE", "FR", "IT", "UK"}
     assert all(len(rows) == 26 for rows in d["trend_by_mp"].values())
+
+
+def test_ad_market_totals_add_up(m):
+    for key, a in payload(m)["ads"].items():
+        mps = a["total_by_mp"].values()
+        assert sum(x["cur"]["ad_spend"] for x in mps) == pytest.approx(a["total"]["cur"]["ad_spend"], abs=0.1), key
+        assert sum(x["cur"]["ad_profit"] for x in mps) == pytest.approx(a["total"]["cur"]["ad_profit"], abs=0.1), key
+        rows = sum(r["cur"]["ad_profit"] for r in a["rows"]["mp_sku"])
+        assert rows == pytest.approx(a["total"]["cur"]["ad_profit"], abs=0.1), key

@@ -29,8 +29,8 @@ in Python and embedded, and the page only displays and filters them.
 - Trends in € and in %, with the selected and the comparison period shaded; marketplaces compared
   side by side.
 
-**Market filter:** each table in the one-minute view has its own *All markets · DE · FR · IT · UK*
-switch, so you can see the key figures, the margin statement, the bridge and trends for one market.
+**Market filter:** each table in the one-minute view, and the advertising table, has its own
+*All markets · DE · FR · IT · UK* switch, so you can see the key figures, the margin statement, the bridge and trends for one market.
 In "Marketplaces compared", picking a market breaks it down by product. Labels spell out
 **contribution margin** (CM1 = after product and Amazon costs, CM2 = after ads, CM3 = after storage).
 
@@ -71,9 +71,9 @@ compared on one scale.
 | **Action** | Order now (MOQ 1,000; previous orders were 3,000), expedite part of it. Cut ads on this SKU in the EU to stretch stock and move that budget to the coral variant (168 weeks of stock) as a substitute. | Bring ACoS under break-even, starting with IT. Keep the converting exact-match campaigns, pause the weakest auto campaigns. | Check the offer list in Seller Central, report unauthorised sellers via Brand Registry, pause FR ads on this listing until the buy box is back. |
 | **Expected effect** | Avoids ~5.1 weeks out of stock: **~1,900 units / €13.9k CM2**, plus the lost ranking just before Q4. Each week of delay costs **~€2.7k**. | Spend at break-even ACoS ≈ €3.6k/week, so **≈ €3.9k/week less ad cost**, stopping most of the **€2.4k/week** loss. | **≈ 18 units/week** back: ≈ €750/week net revenue, ≈ €180/week CM2. |
 
-**Ads overall:** over the last 4 complete weeks, ads **lose about €2.7k per week** in total (ad
-profit −€2,741/week at ROAS 2.15). That is entirely the carafe (−€3.9k/week). Ads for the 750 ml
-anthracite bottle (+€509/week) and the muesli containers (+€488/week) clearly pay off. The coral
+**Ads overall:** over the last 4 complete weeks, ads **lose about €2.8k per week** in total (ad
+profit −€2,778/week at ROAS 2.15). That is entirely the carafe (−€3.9k/week). Ads for the 750 ml
+anthracite bottle (+€509/week) and the muesli containers (+€489/week) clearly pay off. The coral
 bottle and the 1 l glass bottle are slightly negative.
 
 **Watch list (no action this week):** the coral bottle ties up **€33k** at 168 weeks of cover
