@@ -111,7 +111,7 @@ daily charts (too noisy for a weekly review) and gross values.
 ## 5. When is something critical?
 
 Rules run on **fixed windows**, independent of the period selector, so a status doesn't flip when
-someone clicks 1W vs 13W. All thresholds are in `perfdash/config.py`.
+someone clicks 1W vs 16W. All thresholds are in `perfdash/config.py`.
 
 | Signal | 🔴 Critical | 🟡 Watch |
 |---|---|---|

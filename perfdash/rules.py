@@ -1,7 +1,7 @@
 """Status rules: which product in which marketplace needs attention, and why.
 
 Rules run on fixed windows (independent of the period selector) so a status
-does not flip when someone clicks 1W vs 13W. Every rule has a minimum volume
+does not flip when someone clicks 1W vs 16W. Every rule has a minimum volume
 so thin data never turns a cell red.
 """
 from __future__ import annotations
